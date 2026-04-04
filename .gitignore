@@ -1,0 +1,17 @@
+# --- Seguridad (Habeas Data y Privacidad) ---
+.env
+*.xlsx
+*.csv
+personal_data.xlsx
+
+# --- Archivos Pesados (El libro PDF que causó el error) ---
+books/
+*.pdf
+
+# --- Archivos generados por Python ---
+__pycache__/
+*.py[cod]
+faiss_index_lia/
+
+# --- Otros ---
+.DS_Store
