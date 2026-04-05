@@ -10,7 +10,7 @@ This project is a part of the **Proyecto 1 de Innovación Tecnológica** course 
 
 **Instructor: Luis Ferro Diez (https://github.com/Ohtar10)**
 
-#### Other Members:
+#### Members:
 
 | Name | Email |
 |------|-------|
