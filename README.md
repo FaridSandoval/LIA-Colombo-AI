@@ -8,9 +8,7 @@ This project is a part of the **Proyecto 1 de Innovación Tecnológica** course 
 
 ## Contributing Members
 
-**Team Leader: [Tu Nombre Completo](https://github.com/tu_usuario)**
-
-**Instructor: [Nombre del Instructor](https://github.com/instructor_usuario)**
+**Instructor: [Luis Ferro Diez](https://github.com/Ohtar10)**
 
 #### Other Members:
 
