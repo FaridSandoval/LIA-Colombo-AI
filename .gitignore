@@ -13,5 +13,8 @@ __pycache__/
 *.py[cod]
 faiss_index_lia/
 
+# --- Binarios externos ---
+src/bin/
+
 # --- Otros ---
 .DS_Store
