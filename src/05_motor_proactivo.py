@@ -1,41 +1,52 @@
 import pandas as pd
 import os
+import numpy as np
+import faiss
 from openai import OpenAI
 from twilio.rest import Client
-# Importamos lo necesario para leer el libro (FAISS)
-from langchain_community.vectorstores import FAISS
-from langchain_openai import OpenAIEmbeddings
 
 # ==========================================
-# 1. TUS LLAVES MAESTRAS (Mantenemos tus datos)
+# 1. TUS LLAVES MAESTRAS
 # ==========================================
 OPENAI_CLAVE = os.getenv("OPENAI_API_KEY")
 TWILIO_SID = os.getenv("TWILIO_ACCOUNT_SID")
 TWILIO_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
-NUMERO_TWILIO = os.getenv("TWILIO WHATSAPP")
+NUMERO_TWILIO = "whatsapp:+14155238886" # Número estándar Sandbox
 MI_CELULAR = os.getenv("MY_PHONE_NUMBER")
-
-# Forzamos la llave para LangChain
-os.environ["OPENAI_API_KEY"] = OPENAI_CLAVE
 
 # 2. INICIALIZAMOS MOTORES
 cliente_ai = OpenAI(api_key=OPENAI_CLAVE)
 cliente_whatsapp = Client(TWILIO_SID, TWILIO_TOKEN)
 
+base_path = os.path.dirname(os.path.abspath(__file__))
+ruta_faiss = os.path.join(base_path, "faiss_index_lia")
+
 # ==========================================
-# 3. FUNCIÓN RAG: BUSCAR EN EL LIBRO
+# 3. FUNCIÓN RAG: BUSCAR EN EL LIBRO (MODO COMPATIBLE)
 # ==========================================
 def buscar_en_libro(tema):
     try:
-        embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_CLAVE)
-        # Buscamos la carpeta faiss_index_lia que creamos con cerebro_lia.py
-        ruta_faiss = "src/faiss_index_lia" if os.path.exists("src/faiss_index_lia") else "faiss_index_lia"
+        # Cargamos el índice y los textos que guardamos en el Paso 03
+        index = faiss.read_index(os.path.join(ruta_faiss, "index.faiss"))
+        with open(os.path.join(ruta_faiss, "texts.txt"), "r", encoding="utf-8") as f:
+            textos = f.readlines()
+
+        # Convertimos el tema del profe en un vector
+        resp = cliente_ai.embeddings.create(input=[tema], model="text-embedding-3-small")
+        vector_busqueda = np.array([resp.data[0].embedding]).astype('float32')
+
+        # Buscamos los 2 fragmentos más parecidos
+        _, indices = index.search(vector_busqueda, k=2)
         
-        base_datos = FAISS.load_local(ruta_faiss, embeddings, allow_dangerous_deserialization=True)
-        resultados = base_datos.similarity_search(tema, k=2)
-        return "\n".join([doc.page_content for doc in resultados])
+        contexto = ""
+        for i in indices[0]:
+            if i < len(textos):
+                contexto += textos[i] + "\n"
+        
+        return contexto
     except Exception as e:
-        return f"Usa el método CLT del Colombo."
+        print(f"Nota: No se pudo acceder a la memoria FAISS ({e}). Usando conocimiento general.")
+        return "Focus on communicative language teaching (CLT) methods."
 
 # ==========================================
 # 4. LA BOCA DE LIA: GENERAR Y ENVIAR
@@ -43,21 +54,19 @@ def buscar_en_libro(tema):
 def enviar_whatsapp_lia(nombre, feedback):
     print(f"🧠 LIA consultando el libro para {nombre}...")
     
-    # BUSQUEDA RAG
     contexto_libro = buscar_en_libro(feedback)
     
     instrucciones = f"""
     Eres LIA, asistente del Colombo Americano. 
-    Tu misión es dar un consejo basado exclusivamente en el material oficial.
+    Tu misión es dar un consejo basado en el material oficial del libro.
     
     FEEDBACK DEL PROFE: {feedback}
-    CONTENIDO EXTRAÍDO DEL LIBRO: {contexto_libro}
+    CONTENIDO DEL LIBRO: {contexto_libro}
     
     Reglas: 
     1. Saluda amigable. 
-    2. Menciona una frase o vocabulario EXACTO que aparezca en el 'CONTENIDO DEL LIBRO'.
-    3. Si el libro menciona una lección o unidad específica en el texto extraído, dila.
-    4. Máximo 3 oraciones y usa emojis.
+    2. Menciona vocabulario o frases que aparezcan en el 'CONTENIDO DEL LIBRO'.
+    3. Máximo 3 oraciones y usa emojis.
     """
     
     try:
@@ -71,7 +80,7 @@ def enviar_whatsapp_lia(nombre, feedback):
         cliente_whatsapp.messages.create(
             from_=NUMERO_TWILIO,
             body=mensaje_final,
-            to=MI_CELULAR
+            to=MI_CELULAR # Enviamos a tu número para la prueba de tesis
         )
         print(f"✅ Mensaje RAG enviado a tu WhatsApp para el caso de {nombre}.")
         
@@ -83,19 +92,20 @@ def enviar_whatsapp_lia(nombre, feedback):
 # ==========================================
 if __name__ == "__main__":
     print("--- 🤖 INICIANDO LIA AUTOMATIZADA CON RAG ---")
-    ruta_excel = os.path.join(os.path.dirname(os.path.abspath(__file__)), "personal_data.xlsx")
+    ruta_excel = os.path.join(base_path, "personal_data.xlsx")
 
     try:
         df = pd.read_excel(ruta_excel, skiprows=7, header=None, engine='openpyxl')
         contador = 0
         for index, fila in df.iterrows():
+            # Columnas según tu Excel: 5=Nombre, 45=Feedback, 74=Estado
             nombre, feedback, estado = fila[5], fila[45], fila[74]
             
             if pd.notna(nombre) and str(estado).strip() == "Fail":
                 enviar_whatsapp_lia(nombre, feedback)
                 contador += 1
-                if contador == 2: break # Probamos con 2 para no gastar saldo de Twilio
+                if contador == 2: break # Prueba controlada
         
         print(f"\n🏆 LIA procesó {contador} estudiantes con éxito.")
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Error general: {e}")
