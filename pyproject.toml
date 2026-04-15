@@ -1,0 +1,22 @@
+[project]
+name = "rag-chatbot-mvp"
+version = "0.1.0"
+description = "MVP de Chatbot RAG local con Ollama, FAISS y Streamlit"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "langchain>=0.3.0",
+    "langchain-community>=0.3.0",
+    "langchain-ollama>=0.2.0",
+    "langchain-text-splitters>=0.3.0",
+    "faiss-cpu>=1.8.0",
+    "streamlit>=1.38.0",
+    "python-dotenv>=1.0.1",
+    "pypdf>=5.0.0",
+    "langchain-core>=1.2.28",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "ipykernel>=6.29.0", # Para probar en los notebooks generados
+]
