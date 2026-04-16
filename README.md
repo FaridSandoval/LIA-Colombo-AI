@@ -98,6 +98,10 @@ LIA is a **web-based intelligent tutoring platform** for the Colombo Americano l
    python -m venv .venv
    .venv\Scripts\Activate.ps1
    ```
+   Or using `uv`:
+   ```powershell
+   uv init
+   ```
 
 3. Install dependencies from `pyproject.toml`:
    ```powershell
@@ -105,20 +109,19 @@ LIA is a **web-based intelligent tutoring platform** for the Colombo Americano l
    ```
    Or using `uv`:
    ```powershell
-   uv pip sync pyproject.toml
+   uv sync
    ```
 
 4. Download Ollama models:
    ```powershell
    ollama pull qwen3.5:2B
-   # OR for better quality (requires more RAM):
    ollama pull mistral
-   ollama pull tinyllama
    ```
 
 5. Start Ollama server (in a separate terminal):
    ```powershell
    ollama serve
+   ollama list
    ```
 
 6. Place your files in the correct locations:
@@ -127,7 +130,7 @@ LIA is a **web-based intelligent tutoring platform** for the Colombo Americano l
 
 7. Run the Streamlit application:
    ```powershell
-   streamlit run app.py
+   uv run streamlit run app.py
    ```
    Application opens at `http://localhost:8501`
 
