@@ -27,8 +27,8 @@ FAISS_INDEX_DIR.mkdir(parents=True, exist_ok=True)
 EMBEDDING_MODEL_NAME = "nomic-embed-text-v2-moe:latest" # O embeddinggemma:latest
 
 # Parámetros para la división de documentos (Text Splitting)
-CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", 1000))
-CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", 150))
+CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", 500))  # Reducido de 1000
+CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", 50))  # Reducido de 150
 
 # ==========================================
 # 3. CONFIGURACIÓN DE INFERENCIA (OLLAMA & LLM)
@@ -36,9 +36,8 @@ CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", 150))
 # Conexión local a Ollama
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 
-# Modelo LLM local en Ollama.
-# Modelos recomendados: mistral:latest, neural-chat:latest, orca-mini:latest, tinyllama:latest
-LLM_MODEL_NAME = "ollama:mistral:latest"
+# Modelo LLM local en Ollama
+LLM_MODEL_NAME = "ollama:qwen3.5:2B"
 
 
 # Temperatura baja (0.1 - 0.3) es ideal para RAG, ya que reduce las alucinaciones 

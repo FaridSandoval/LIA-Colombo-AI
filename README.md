@@ -1,6 +1,6 @@
 # 🤖 LIA — Tutor Virtual Gamificado por WhatsApp
 
-This project is a part of the **Proyecto 1 de Innovación Tecnológica** course in the Applied Artificial Intelligence Master, Universidad Icesi, Cali Colombia.
+This project is a part of the **Proyecto de Innovación Tecnológica** course in the Applied Artificial Intelligence Master, Universidad Icesi, Cali Colombia.
 
 #### -- Project Status: Active
 
@@ -40,108 +40,170 @@ The purpose of this project is to develop **LIA** (*Learning Interactive Assista
 * Session State Management (in-memory, inactivity detection)
 
 ### Technologies
-* Python 3.14
-* OpenAI API (`gpt-4o-mini`, `text-embedding-3-small`)
-* FAISS (`faiss-cpu`) + NumPy — vector index without LangChain
-* Flask — webhook server
-* Twilio — WhatsApp Sandbox messaging
-* ngrok — local HTTPS tunnel
-* Pandas + openpyxl — student data processing
-* Poppler — PDF OCR preprocessing
+* **Backend:** Python 3.10+, LangChain, LangGraph
+* **Frontend:** Streamlit (web application)
+* **LLM:** Ollama (local models: qwen3.5:2B, mistral, tinyllama)
+* **Embeddings:** Nomic Embed Text v2 (via Ollama)
+* **Vector DB:** Chroma (persistent, local storage)
+* **Document Processing:** PyPDF2, openpyxl, UnstructuredExcelLoader
+* **Data Management:** Pandas, openpyxl
+* **Text Splitting:** LangChain RecursiveCharacterTextSplitter
 
 ---
 
 ## Project Description
 
-LIA addresses a common gap in language learning: students lack accessible, on-demand support between classes. The system ingests the Colombo Americano's official English textbook via OCR, chunks it into passages, and indexes those passages as vector embeddings in a local FAISS database. When a student asks a question or starts a tutoring session, LIA retrieves the most semantically relevant passage and uses it as grounding context for `gpt-4o-mini` — ensuring responses are faithful to the institution's curriculum.
+LIA is a **web-based intelligent tutoring platform** for the Colombo Americano language institute. It provides personalized, AI-powered tutoring through a Retrieval-Augmented Generation (RAG) architecture combined with an intelligent agent system (LangGraph). Students interact with a conversational chatbot via Streamlit that retrieves relevant pedagogical material and generates contextual responses.
+
+**Key Features:**
+- **Web-based Interface:** Streamlit application with role-based access (Admin, Student)
+- **Local LLM Processing:** All inference runs locally via Ollama (no external API calls)
+- **RAG System:** Documents indexed in Chroma, retrieving top-k similar passages for context injection
+- **Intelligent Agent:** LangGraph agent with tool calling for semantic search and context retrieval
+- **Multi-format Document Support:** Ingests PDF, TXT, Markdown, and XLSX files
+- **Role-based UI:** Admin panel for document management; Student panel for tutoring sessions
+- **Token Optimization:** Conversation history summarization to reduce context window usage
 
 **Data sources:**
-- Colombo Americano pedagogical PDF (processed via OCR in `02_extraer_texto_ocr.py`)
-- Student academic records (`personal_data.xlsx`) with fields: name, phone, unit, status (Pass/Fail)
-
-**Key challenges solved:**
-- **Twilio Sandbox silence bug:** The sandbox collapses silently when TwiML contains multiple `<Message>` elements. Fixed by concatenating all response text into a single `tw_resp.message()` call separated by `\n\n`.
-- **Python 3.14 compatibility:** LangChain and Pydantic are incompatible with Python 3.14. All RAG logic was reimplemented directly with `faiss-cpu` and `numpy`.
-- **Session state:** Managed in-memory with a `sesiones` dictionary keyed by phone number, including inactivity detection via a background daemon thread (5-minute timeout, 30-second polling interval).
+- Pedagogical documents in `data/raw/` (PDF, TXT, MD, XLSX formats)
+- Student records in `data/user/estudiantes_dummies.xlsx` with fields: ID Number, Student Name, Course, Status, Final Score, Teacher Feedback
+- Vector embeddings stored persistently in `data/chroma_db/`
 
 **Gamification flow:**
-1. Student greets LIA → receives main menu
-2. Selects option 1 → 5-question career begins (RAG-grounded questions)
-3. Each correct answer = +1 star; incorrect answers receive empathetic feedback in Spanish without revealing the answer
-4. After 5 questions, total stars are shown and session returns to menu
+1. **Student Login** → Enter ID Number to access personalized session
+2. **Chat Interface** → Ask questions about the course material
+3. **Intelligent Responses** → Agent retrieves relevant passages and generates contextual answers
+4. **Context Awareness** → System considers student's course, feedback, and conversation history
+5. **Admin Features** → Upload new documents, manage knowledge base (Admin role only)
 
 ---
 
 ## Getting Started
 
-1. Clone this repo:
+### Prerequisites
+- Python 3.10+
+- [Ollama](https://ollama.ai/) installed and running
+- Virtual environment (venv or conda)
+
+### Installation
+
+1. Clone this repository:
    ```bash
-   git clone https://github.com/tu_usuario/proyecto-lia.git
-   cd proyecto-lia
+   git clone https://github.com/tu_usuario/LIA-Colombo-AI.git
+   cd LIA-Colombo-AI
    ```
 
-2. Install dependencies:
+2. Create and activate virtual environment:
    ```powershell
-   py -m pip install openai faiss-cpu numpy pandas openpyxl flask twilio pyngrok
+   python -m venv .venv
+   .venv\Scripts\Activate.ps1
    ```
-   > **Note:** LangChain and Pydantic are intentionally excluded for Python 3.14 compatibility.
 
-3. Place your files in the correct locations:
-   - PDF textbook → `libro_pedagogico.pdf` (project root)
-   - Student records → `personal_data.xlsx` (project root)
-   - Poppler binaries → `src/bin/`
-
-4. Set environment variables (run in every new terminal session):
+3. Install dependencies from `pyproject.toml`:
    ```powershell
-   $env:OPENAI_API_KEY     = "sk-..."
-   $env:TWILIO_ACCOUNT_SID = "AC..."
-   $env:TWILIO_AUTH_TOKEN  = "..."
-   $env:TWILIO_WHATSAPP    = "whatsapp:+14155238886"
-   $env:NGROK_AUTH_TOKEN   = "..."
+   pip install -e .
+   ```
+   Or using `uv`:
+   ```powershell
+   uv pip sync pyproject.toml
    ```
 
-5. Run the pipeline in order from the `src/` folder:
+4. Download Ollama models:
+   ```powershell
+   ollama pull qwen3.5:2B
+   # OR for better quality (requires more RAM):
+   ollama pull mistral
+   ollama pull tinyllama
+   ```
 
-   | Step | Script | Output |
-   |------|--------|--------|
-   | 02 | `py 02_extraer_texto_ocr.py` | `libro_texto.txt` |
-   | 03 | `py 03_entrenar_memoria_rag.py` | `faiss_index_lia/` |
-   | 04 | `py 04_abrir_tunel.py` | ngrok HTTPS URL |
-   | 05 *(optional)* | `py 05_motor_proactivo.py` | WhatsApp proactive messages |
-   | 06 | `py 06_servidor_interactivo.py` | Live Flask server |
+5. Start Ollama server (in a separate terminal):
+   ```powershell
+   ollama serve
+   ```
 
-   > ⚠️ After step 04, paste the ngrok URL + `/whatsapp` into **Twilio Console → Sandbox Settings → "When a message comes in"** and keep that terminal open.
+6. Place your files in the correct locations:
+   - Pedagogical documents → `data/raw/` (PDF, TXT, MD, XLSX)
+   - Student records → `data/user/estudiantes_dummies.xlsx`
 
-6. Test: send `Hola` to the Twilio Sandbox number on WhatsApp.
+7. Run the Streamlit application:
+   ```powershell
+   streamlit run app.py
+   ```
+   Application opens at `http://localhost:8501`
+
+### First Use
+- **Login (Student):** Use any ID Number from `data/user/estudiantes_dummies.xlsx`
+- **Login (Admin):** Use `Admin` as the ID Number to access admin panel
+- **Admin Panel:** Upload documents via "Actualizar Base de Conocimiento" button
 
 ---
 
 ## Repository Structure
 
 ```
-proyecto-lia/
+LIA-Colombo-AI/
+├── app.py                          ← Main Streamlit application
+├── pyproject.toml                  ← Project dependencies
+├── data/
+│   ├── raw/                        ← User-uploaded documents (PDF, TXT, MD, XLSX)
+│   ├── user/
+│   │   └── estudiantes_dummies.xlsx ← Student database for login
+│   ├── chroma_db/                  ← Persistent vector store (auto-generated)
+│   └── faiss_index/                ← Legacy FAISS indexes
 ├── src/
-│   ├── bin/                      ← Poppler binaries (not tracked by git)
-│   ├── faiss_index_lia/          ← Generated in step 03 (not tracked by git)
-│   │   ├── index.faiss
-│   │   └── texts.txt
-│   ├── 02_extraer_texto_ocr.py
-│   ├── 03_entrenar_memoria_rag.py
-│   ├── 04_abrir_tunel.py
-│   ├── 05_motor_proactivo.py
-│   └── 06_servidor_interactivo.py
-├── libro_pedagogico.pdf
-├── personal_data.xlsx
+│   ├── __init__.py
+│   ├── config.py                   ← Configuration (models, paths, hyperparameters)
+│   ├── document_loader.py          ← Multi-format document ingestion
+│   ├── embeddings.py               ← Chroma vector store setup
+│   └── llm_chain.py                ← LangGraph agent with RAG tools
 ├── .gitignore
-└── README.md
+├── README.md
+└── SETUP.md
 ```
+
+**Key Modules:**
+- `app.py` — Streamlit UI with login, chat interface, and admin panel
+- `src/config.py` — Centralized configuration (LLM model, chunk size, paths)
+- `src/document_loader.py` — Loads PDF, TXT, MD, XLSX files and splits them
+- `src/embeddings.py` — Manages Chroma vector store and embedding model
+- `src/llm_chain.py` — LangGraph agent with RAG retrieval tool and context summarization
 
 ---
 
-## Featured Notebooks / Analysis / Deliverables
+## Featured Code / Components / Deliverables
 
-* [`06_servidor_interactivo.py`](src/06_servidor_interactivo.py) — Core chatbot server: Flask webhook, RAG pipeline, gamification engine, inactivity monitor
-* [`05_motor_proactivo.py`](src/05_motor_proactivo.py) — Proactive outreach engine for at-risk students
-* [`03_entrenar_memoria_rag.py`](src/03_entrenar_memoria_rag.py) — FAISS index construction from pedagogical text
-* [Thesis Document](link) *(add link when available)*
-* [Demo Video](link) *(add link when available)*
+### Core Application
+* **[`app.py`](app.py)** — Main Streamlit application
+  - Role-based login (Admin/Student)
+  - Chat interface with streaming responses
+  - Admin panel for document management
+  - Session state management
+
+### RAG & LLM Pipeline
+* **[`src/llm_chain.py`](src/llm_chain.py)** — LangGraph intelligent agent
+  - RAG tool for semantic search
+  - Conversation history summarization
+  - Dynamic prompt injection with context
+  - Middleware-based context enrichment
+
+* **[`src/embeddings.py`](src/embeddings.py)** — Vector store management
+  - Chroma integration
+  - Embedding model initialization (Ollama)
+  - Document persistence and retrieval
+
+* **[`src/document_loader.py`](src/document_loader.py)** — Multi-format document ingestion
+  - Supports: PDF, TXT, Markdown, XLSX
+  - Automatic chunking and splitting
+  - Metadata preservation (source tracking)
+
+### Configuration
+* **[`src/config.py`](src/config.py)** — Centralized configuration
+  - Model selection (qwen3.5:2B, mistral, tinyllama)
+  - Chunk size and overlap tuning (CHUNK_SIZE=300, CHUNK_OVERLAP=50)
+  - Path management for data directories
+  - LLM temperature and system prompts
+
+### Legacy Components (Phase 1 — WhatsApp/Flask Architecture)
+* `src/06_servidor_interactivo.py` — Flask API server
+* `src/05_motor_proactivo.py` — Proactive messaging engine
+* `src/03_entrenar_memoria_rag.py` — FAISS index training
