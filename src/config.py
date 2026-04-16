@@ -24,8 +24,7 @@ FAISS_INDEX_DIR.mkdir(parents=True, exist_ok=True)
 # 2. CONFIGURACIÓN DE EMBEDDINGS Y CHUNKING
 # ==========================================
 # Modelo de embeddings local en Ollama.
-# Ejemplos de modelos disponibles localmente: embeddinggemma:latest, nomic-embed-text-v2-moe:latest
-EMBEDDING_MODEL_NAME = os.getenv("EMBEDDING_MODEL_NAME", "embeddinggemma:latest")
+EMBEDDING_MODEL_NAME = "nomic-embed-text-v2-moe:latest" # O embeddinggemma:latest
 
 # Parámetros para la división de documentos (Text Splitting)
 CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", 1000))
@@ -37,12 +36,17 @@ CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", 150))
 # Conexión local a Ollama
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 
-# Modelo LLM local en Ollama. Ajusta según tu lista de modelos.
-LLM_MODEL_NAME = os.getenv("LLM_MODEL_NAME", "qwen3.5:2B")
+# Modelo LLM local en Ollama.
+# Modelos recomendados: mistral:latest, neural-chat:latest, orca-mini:latest, tinyllama:latest
+LLM_MODEL_NAME = "ollama:mistral:latest"
+
 
 # Temperatura baja (0.1 - 0.3) es ideal para RAG, ya que reduce las alucinaciones 
 # y obliga al modelo a ceñirse al contexto recuperado.
 LLM_TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", 0.2)) 
+
+CHROMA_DB_DIR = DATA_DIR / "chroma_db"
+CHROMA_DB_DIR.mkdir(parents=True, exist_ok=True)
 
 # ==========================================
 # 4. CONFIGURACIÓN DEL SISTEMA / PROMPT

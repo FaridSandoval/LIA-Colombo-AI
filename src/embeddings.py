@@ -1,35 +1,17 @@
 from langchain_ollama import OllamaEmbeddings
-from langchain_community.vectorstores import FAISS
-from src.config import EMBEDDING_MODEL_NAME, FAISS_INDEX_DIR, OLLAMA_BASE_URL
+from langchain_chroma import Chroma
+from src.config import EMBEDDING_MODEL_NAME, CHROMA_DB_DIR
 
 def get_embedding_model():
-    try:
-        return OllamaEmbeddings(
-            model=EMBEDDING_MODEL_NAME,
-            base_url=OLLAMA_BASE_URL,
-            validate_model_on_init=True,
-        )
-    except Exception as exc:
-        raise RuntimeError(
-            "No se pudo inicializar el modelo de embeddings local. "
-            "Asegúrate de que Ollama esté en ejecución y de que el modelo "
-            f"'{EMBEDDING_MODEL_NAME}' esté disponible en tu servidor local."
-        ) from exc
+    return OllamaEmbeddings(model=EMBEDDING_MODEL_NAME)
 
 def create_or_load_vectorstore(documents=None):
     embeddings = get_embedding_model()
-    
-    # Intentar cargar índice existente para ahorrar cómputo
-    if (FAISS_INDEX_DIR / "index.faiss").exists():
-        return FAISS.load_local(
-            str(FAISS_INDEX_DIR), 
-            embeddings, 
-            allow_dangerous_deserialization=True
-        )
-    
+    vector_store = Chroma(
+        collection_name="local_rag_agent",
+        embedding_function=embeddings,
+        persist_directory=str(CHROMA_DB_DIR)
+    )
     if documents:
-        vectorstore = FAISS.from_documents(documents, embeddings)
-        vectorstore.save_local(str(FAISS_INDEX_DIR))
-        return vectorstore
-    
-    return None
+        vector_store.add_documents(documents)
+    return vector_store
