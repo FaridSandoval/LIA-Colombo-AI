@@ -1,0 +1,597 @@
+# ==========================================================
+# Golden Set — LIA-Colombo AI
+# Ciclo Fundamental Plus (A2 / B1)
+# ==========================================================
+# PROPUESTA INICIAL — 40 preguntas canónicas basadas en temario estándar
+# de curso ESL adulto A2→B1. Validar con Iván y el profe Luis Ferro Díez
+# antes de congelarla como baseline de RAGAS.
+#
+# Estructura de cada item:
+#   id: identificador estable.
+#   category: GRAMMAR | VOCABULARY | CONVERSATION | EXERCISE | GUARDRAIL_OFF_DOMAIN | GUARDRAIL_LOW_CONFIDENCE
+#   language: es | en | mixed
+#   level: A1 | A2 | B1 | B2
+#   unit: unidad referenciada si aplica.
+#   topic: tema preciso.
+#   question: pregunta del estudiante tal como la formularía.
+#   ground_truth: respuesta esperada (concisa, para RAGAS faithfulness/relevancy).
+#   expected_sources: lista de substrings que deberían aparecer entre las citaciones
+#                     retornadas (para context_precision/recall).
+#   must_mention: palabras/ejemplos que DEBEN aparecer en la respuesta.
+#   must_not_mention: palabras que NO deben aparecer (alucinaciones típicas).
+# ==========================================================
+
+version: 1
+curator: "Propuesta inicial generada por LIA pipeline (2026-04-21). A validar con el equipo."
+total_items: 40
+
+items:
+  # =========================
+  # GRAMMAR — Present Simple
+  # =========================
+  - id: G01
+    category: GRAMMAR
+    language: es
+    level: A2
+    unit: 1
+    topic: present_simple_auxiliaries
+    question: "¿Cuándo uso 'do' y cuándo uso 'does'?"
+    ground_truth: >-
+      En el presente simple, 'do' se usa con los sujetos I, you, we, they para formar preguntas y negaciones.
+      'Does' se usa con la tercera persona singular (he, she, it). Ejemplos: Do you live here? / Does she work?
+    expected_sources: ["present simple", "auxiliary", "do", "does"]
+    must_mention: ["I", "you", "we", "they", "he", "she", "it"]
+    must_not_mention: []
+
+  - id: G02
+    category: GRAMMAR
+    language: mixed
+    level: A2
+    unit: 1
+    topic: present_simple_third_person_s
+    question: "¿Por qué se le pone 's' a los verbos con he/she/it en presente?"
+    ground_truth: >-
+      En presente simple, cuando el sujeto es he, she o it (tercera persona singular), se añade -s o -es al verbo.
+      Ejemplos: He works / She studies / It rains.
+    expected_sources: ["present simple", "third person"]
+    must_mention: ["he", "she", "it", "-s", "-es"]
+
+  - id: G03
+    category: GRAMMAR
+    language: en
+    level: A2
+    unit: 1
+    topic: present_simple_vs_continuous
+    question: "What is the difference between 'I work' and 'I am working'?"
+    ground_truth: >-
+      'I work' is present simple — it describes habits or permanent situations.
+      'I am working' is present continuous — it describes actions happening now or around now.
+    expected_sources: ["present simple", "present continuous", "present progressive"]
+    must_mention: ["habit", "now"]
+
+  # =========================
+  # GRAMMAR — Past Simple
+  # =========================
+  - id: G04
+    category: GRAMMAR
+    language: es
+    level: A2
+    unit: 3
+    topic: past_simple_regular_verbs
+    question: "¿Cómo se forma el pasado simple de los verbos regulares?"
+    ground_truth: >-
+      Se añade -ed al final del verbo base. Si termina en -e, sólo se añade -d (live → lived).
+      Si termina en consonante + y, se cambia por -ied (study → studied).
+    expected_sources: ["past simple", "regular verbs", "-ed"]
+    must_mention: ["-ed", "-d", "-ied"]
+
+  - id: G05
+    category: GRAMMAR
+    language: es
+    level: A2
+    unit: 3
+    topic: past_simple_irregular_verbs
+    question: "¿Cuál es el pasado de 'go' y 'eat'?"
+    ground_truth: >-
+      El pasado simple de 'go' es 'went'. El pasado simple de 'eat' es 'ate'. Son verbos irregulares.
+    expected_sources: ["irregular verbs", "past simple"]
+    must_mention: ["went", "ate"]
+
+  - id: G06
+    category: GRAMMAR
+    language: mixed
+    level: A2
+    unit: 3
+    topic: past_simple_negation
+    question: "How do I say 'yo no fui a la fiesta' en past simple?"
+    ground_truth: >-
+      Se dice 'I didn't go to the party'. En pasado simple, la negación usa el auxiliar 'did not' (didn't)
+      + el verbo en base form (go, no went).
+    expected_sources: ["past simple", "didn't", "did not"]
+    must_mention: ["didn't", "go"]
+    must_not_mention: ["didn't went"]
+
+  # =========================
+  # GRAMMAR — Past Progressive
+  # =========================
+  - id: G07
+    category: GRAMMAR
+    language: es
+    level: B1
+    unit: 5
+    topic: past_progressive
+    question: "¿Cuándo se usa el past progressive?"
+    ground_truth: >-
+      El past progressive (was/were + verb-ing) se usa para describir acciones en progreso en el pasado,
+      especialmente cuando otra acción las interrumpe. Ejemplo: I was studying when she called.
+    expected_sources: ["past progressive", "past continuous", "was", "were"]
+    must_mention: ["was", "were", "-ing"]
+
+  - id: G08
+    category: GRAMMAR
+    language: mixed
+    level: B1
+    unit: 5
+    topic: past_progressive_vs_past_simple
+    question: "¿Diferencia entre 'I watched TV' y 'I was watching TV'?"
+    ground_truth: >-
+      'I watched TV' (past simple) describe una acción completada en el pasado.
+      'I was watching TV' (past progressive) describe una acción en progreso en un momento del pasado,
+      típicamente interrumpida por otra.
+    expected_sources: ["past simple", "past progressive"]
+    must_mention: ["completada", "progreso"]
+
+  # =========================
+  # GRAMMAR — Present Perfect
+  # =========================
+  - id: G09
+    category: GRAMMAR
+    language: es
+    level: B1
+    unit: 7
+    topic: present_perfect
+    question: "¿Cómo se forma el present perfect?"
+    ground_truth: >-
+      Se forma con el auxiliar have/has + el participio pasado (past participle) del verbo principal.
+      Ejemplo: I have eaten / She has gone.
+    expected_sources: ["present perfect", "have", "has", "past participle"]
+    must_mention: ["have", "has", "participle"]
+
+  - id: G10
+    category: GRAMMAR
+    language: en
+    level: B1
+    unit: 7
+    topic: present_perfect_for_since
+    question: "When do I use 'for' and when do I use 'since'?"
+    ground_truth: >-
+      'For' is used with a duration of time (for 3 years, for two hours).
+      'Since' is used with a specific point in time (since 2020, since Monday).
+    expected_sources: ["present perfect", "for", "since"]
+    must_mention: ["duration", "point in time"]
+
+  - id: G11
+    category: GRAMMAR
+    language: es
+    level: B1
+    unit: 7
+    topic: present_perfect_vs_past_simple
+    question: "¿Diferencia entre 'I have visited Paris' y 'I visited Paris'?"
+    ground_truth: >-
+      'I have visited Paris' (present perfect) indica que lo has visitado alguna vez, sin especificar cuándo,
+      y tiene relevancia ahora.
+      'I visited Paris' (past simple) refiere a un momento específico del pasado, ya cerrado.
+    expected_sources: ["present perfect", "past simple"]
+    must_mention: ["specific", "específico"]
+
+  # =========================
+  # GRAMMAR — Future
+  # =========================
+  - id: G12
+    category: GRAMMAR
+    language: es
+    level: A2
+    unit: 4
+    topic: future_will_vs_going_to
+    question: "¿Cuándo uso 'will' y cuándo uso 'going to'?"
+    ground_truth: >-
+      'Will' se usa para decisiones espontáneas, predicciones sin evidencia y promesas.
+      'Going to' se usa para planes ya decididos y predicciones con evidencia presente.
+    expected_sources: ["will", "going to", "future"]
+    must_mention: ["spontaneous", "plan", "decisión"]
+
+  # =========================
+  # GRAMMAR — Modals
+  # =========================
+  - id: G13
+    category: GRAMMAR
+    language: es
+    level: A2
+    unit: 4
+    topic: modal_can_could
+    question: "¿Cómo se usa 'can' para pedir permiso?"
+    ground_truth: >-
+      'Can I…?' se usa para pedir permiso informalmente (Can I borrow your pen?).
+      'Could I…?' es una forma más cortés (Could I borrow your pen?).
+    expected_sources: ["can", "could", "modal", "permission"]
+    must_mention: ["Can I", "Could I"]
+
+  - id: G14
+    category: GRAMMAR
+    language: mixed
+    level: B1
+    unit: 6
+    topic: modal_should_must
+    question: "¿'Should' y 'must' significan lo mismo?"
+    ground_truth: >-
+      No. 'Should' expresa un consejo o recomendación (deberías hacerlo).
+      'Must' expresa una obligación fuerte o regla (tienes que hacerlo).
+    expected_sources: ["should", "must", "modal", "advice", "obligation"]
+    must_mention: ["advice", "obligation", "consejo", "obligación"]
+
+  # =========================
+  # GRAMMAR — Articles & Prepositions
+  # =========================
+  - id: G15
+    category: GRAMMAR
+    language: es
+    level: A2
+    unit: 2
+    topic: articles_a_an
+    question: "¿Cuándo uso 'a' y cuándo 'an'?"
+    ground_truth: >-
+      'A' se usa antes de palabras que empiezan con sonido consonántico (a book, a university).
+      'An' se usa antes de palabras con sonido vocálico (an apple, an hour).
+    expected_sources: ["article", "a", "an"]
+    must_mention: ["vowel", "consonant", "sound"]
+
+  - id: G16
+    category: GRAMMAR
+    language: en
+    level: A2
+    unit: 2
+    topic: prepositions_in_on_at
+    question: "When do I use 'in', 'on', and 'at' with time?"
+    ground_truth: >-
+      'In' is used with months, years, seasons (in July, in 2024).
+      'On' is used with days and dates (on Monday, on July 4th).
+      'At' is used with specific times (at 7 pm, at noon).
+    expected_sources: ["preposition", "in", "on", "at", "time"]
+    must_mention: ["month", "day", "time"]
+
+  # =========================
+  # GRAMMAR — Comparatives
+  # =========================
+  - id: G17
+    category: GRAMMAR
+    language: es
+    level: A2
+    unit: 4
+    topic: comparatives_superlatives
+    question: "¿Cómo se forma el comparativo de 'big'?"
+    ground_truth: >-
+      El comparativo de 'big' es 'bigger' (regla de doblar la consonante final en adjetivos cortos CVC).
+      El superlativo es 'the biggest'.
+    expected_sources: ["comparative", "big", "-er"]
+    must_mention: ["bigger", "biggest"]
+
+  - id: G18
+    category: GRAMMAR
+    language: mixed
+    level: B1
+    unit: 8
+    topic: comparatives_irregular
+    question: "¿Cuál es el comparativo de 'good' y 'bad'?"
+    ground_truth: >-
+      'Good' → 'better' (comparativo), 'the best' (superlativo).
+      'Bad' → 'worse' (comparativo), 'the worst' (superlativo). Son irregulares.
+    expected_sources: ["comparative", "irregular", "good", "bad"]
+    must_mention: ["better", "best", "worse", "worst"]
+
+  # =========================
+  # GRAMMAR — Conditionals
+  # =========================
+  - id: G19
+    category: GRAMMAR
+    language: es
+    level: B1
+    unit: 9
+    topic: first_conditional
+    question: "¿Cómo se forma el primer condicional?"
+    ground_truth: >-
+      Estructura: If + present simple, … will + base verb.
+      Ejemplo: If it rains, I will stay home. Se usa para situaciones reales y posibles en el futuro.
+    expected_sources: ["first conditional", "if"]
+    must_mention: ["if", "will", "present simple"]
+
+  - id: G20
+    category: GRAMMAR
+    language: mixed
+    level: B1
+    unit: 9
+    topic: second_conditional
+    question: "¿Cuál es la diferencia entre first y second conditional?"
+    ground_truth: >-
+      First conditional describe situaciones reales/posibles (If it rains, I will stay).
+      Second conditional describe situaciones hipotéticas/irreales (If I had money, I would travel).
+    expected_sources: ["first conditional", "second conditional"]
+    must_mention: ["real", "hypothetical"]
+
+  # =========================
+  # VOCABULARY
+  # =========================
+  - id: V01
+    category: VOCABULARY
+    language: es
+    level: A2
+    topic: vocabulary_family
+    question: "¿Cómo se dice 'cuñado' en inglés?"
+    ground_truth: "Se dice 'brother-in-law'. Si es la esposa del hermano, es 'sister-in-law'."
+    expected_sources: ["family", "brother-in-law"]
+    must_mention: ["brother-in-law"]
+
+  - id: V02
+    category: VOCABULARY
+    language: es
+    level: A2
+    topic: vocabulary_food
+    question: "¿Cuál es la diferencia entre 'supper' y 'dinner'?"
+    ground_truth: >-
+      'Dinner' es la comida principal del día (suele ser la cena). 'Supper' es una cena más ligera, a veces usada como sinónimo de dinner en contextos familiares.
+    expected_sources: ["dinner", "supper", "meals"]
+    must_mention: ["dinner", "supper"]
+
+  - id: V03
+    category: VOCABULARY
+    language: mixed
+    level: A2
+    topic: false_friends
+    question: "¿'Assist' significa asistir a una reunión?"
+    ground_truth: >-
+      No. 'Assist' significa ayudar, no asistir. Para decir 'asistir a una reunión' se usa 'attend a meeting'.
+      Es un falso amigo común.
+    expected_sources: ["false friend", "attend", "assist"]
+    must_mention: ["attend", "help"]
+    must_not_mention: ["asistir"]
+
+  - id: V04
+    category: VOCABULARY
+    language: en
+    level: B1
+    topic: phrasal_verbs
+    question: "What does 'give up' mean?"
+    ground_truth: >-
+      'Give up' means to stop trying or to quit. Example: She gave up smoking last year.
+    expected_sources: ["phrasal verb", "give up"]
+    must_mention: ["quit", "stop"]
+
+  - id: V05
+    category: VOCABULARY
+    language: es
+    level: A2
+    topic: vocabulary_weather
+    question: "¿Cómo describo el clima en inglés?"
+    ground_truth: >-
+      Se usa 'It is' + adjetivo: It is sunny, It is cloudy, It is raining, It is cold, It is hot.
+      Para temperatura: It is 25 degrees.
+    expected_sources: ["weather", "sunny", "cloudy"]
+    must_mention: ["sunny", "cloudy", "rain"]
+
+  # =========================
+  # CONVERSATION
+  # =========================
+  - id: C01
+    category: CONVERSATION
+    language: es
+    level: A2
+    topic: introductions
+    question: "¿Cómo me presento formalmente en inglés?"
+    ground_truth: >-
+      Fórmulas comunes: 'Hello, my name is [nombre]. It's a pleasure to meet you.' o
+      'Good morning, I'm [nombre]. Nice to meet you.'
+    expected_sources: ["introduction", "greet"]
+    must_mention: ["Nice to meet you", "My name is"]
+
+  - id: C02
+    category: CONVERSATION
+    language: en
+    level: A2
+    topic: ordering_food
+    question: "How do I order food in a restaurant in English?"
+    ground_truth: >-
+      Common phrases: 'I would like…', 'Can I have…, please?', 'I'll have the…'.
+      Example: I would like a coffee, please.
+    expected_sources: ["restaurant", "order"]
+    must_mention: ["I would like", "please"]
+
+  - id: C03
+    category: CONVERSATION
+    language: es
+    level: B1
+    topic: asking_directions
+    question: "¿Cómo pido direcciones en inglés?"
+    ground_truth: >-
+      Fórmulas: 'Excuse me, how do I get to…?', 'Could you tell me where … is?', 'Is it far from here?'.
+    expected_sources: ["directions"]
+    must_mention: ["Excuse me", "how do I get to"]
+
+  - id: C04
+    category: CONVERSATION
+    language: mixed
+    level: B1
+    topic: making_appointments
+    question: "¿Cómo agendo una cita por teléfono en inglés?"
+    ground_truth: >-
+      Fórmulas: 'I would like to make an appointment', 'Is Tuesday at 3 pm available?',
+      'Could we reschedule to…?'.
+    expected_sources: ["appointment", "phone"]
+    must_mention: ["appointment", "schedule"]
+
+  # =========================
+  # EXERCISE
+  # =========================
+  - id: E01
+    category: EXERCISE
+    language: es
+    level: A2
+    topic: exercise_verb_conjugation
+    question: "Dame un ejercicio de conjugación en presente simple."
+    ground_truth: >-
+      Completa con la forma correcta del verbo: 1) She ___ (work) every day.
+      2) They ___ (play) soccer on Sundays. 3) He ___ (not / like) coffee.
+      Respuestas: works / play / doesn't like.
+    expected_sources: ["present simple", "exercise"]
+    must_mention: ["works", "play", "doesn't"]
+
+  - id: E02
+    category: EXERCISE
+    language: mixed
+    level: B1
+    topic: exercise_past_simple
+    question: "Dame 5 oraciones en past simple para traducir."
+    ground_truth: >-
+      1) Ayer fui al cine → Yesterday I went to the cinema.
+      2) Ella compró un libro → She bought a book.
+      3) Nosotros no vimos la película → We didn't watch the movie.
+      4) ¿Llamaste a tu mamá? → Did you call your mom?
+      5) El avión llegó tarde → The plane arrived late.
+    expected_sources: ["past simple"]
+    must_mention: ["went", "bought"]
+
+  # =========================
+  # GRAMMAR — Questions / Word order
+  # =========================
+  - id: G21
+    category: GRAMMAR
+    language: es
+    level: A2
+    unit: 2
+    topic: wh_questions
+    question: "¿Cómo formo preguntas con 'what', 'where', 'when'?"
+    ground_truth: >-
+      Estructura: Wh-word + auxiliar + sujeto + verbo base + complemento.
+      Ejemplo: What do you do? / Where does she live? / When did they arrive?
+    expected_sources: ["wh questions", "question word"]
+    must_mention: ["what", "where", "when"]
+
+  - id: G22
+    category: GRAMMAR
+    language: en
+    level: A2
+    unit: 2
+    topic: yes_no_questions
+    question: "How do I make yes/no questions?"
+    ground_truth: >-
+      Invert the auxiliary and the subject. Example: You are happy → Are you happy?
+      In present simple without 'be', use do/does: Do you like coffee?
+    expected_sources: ["yes no question", "inversion"]
+    must_mention: ["auxiliary", "invert"]
+
+  # =========================
+  # GRAMMAR — Plurals & Countable
+  # =========================
+  - id: G23
+    category: GRAMMAR
+    language: es
+    level: A2
+    unit: 1
+    topic: plurals
+    question: "¿Cuál es el plural de 'child' y de 'foot'?"
+    ground_truth: >-
+      'Child' → 'children' (plural irregular). 'Foot' → 'feet' (plural irregular).
+    expected_sources: ["plural", "irregular"]
+    must_mention: ["children", "feet"]
+
+  - id: G24
+    category: GRAMMAR
+    language: mixed
+    level: A2
+    unit: 2
+    topic: countable_uncountable
+    question: "¿Uso 'much' o 'many' con 'water'?"
+    ground_truth: >-
+      'Water' es uncountable (no contable), así que se usa 'much': How much water do you drink?
+      'Many' se usa con contables: How many bottles of water?
+    expected_sources: ["countable", "uncountable", "much", "many"]
+    must_mention: ["much", "many", "countable"]
+
+  # =========================
+  # GRAMMAR — Adverbs of frequency
+  # =========================
+  - id: G25
+    category: GRAMMAR
+    language: es
+    level: A2
+    unit: 1
+    topic: adverbs_frequency
+    question: "¿Dónde pongo 'always' en una oración?"
+    ground_truth: >-
+      Los adverbios de frecuencia (always, usually, often, sometimes, never) van antes del verbo principal
+      pero después de 'be'. Ejemplo: I always study at night. / She is always happy.
+    expected_sources: ["adverb", "frequency", "always"]
+    must_mention: ["always", "before"]
+
+  # =========================
+  # GUARDRAIL — OFF DOMAIN
+  # =========================
+  - id: OFF01
+    category: GUARDRAIL_OFF_DOMAIN
+    language: es
+    level: n/a
+    topic: off_domain_general_knowledge
+    question: "¿Cuál es la capital de Francia?"
+    ground_truth: >-
+      Respuesta esperada: el guardrail redirige al estudiante, indicando que la pregunta está fuera del dominio
+      del curso de inglés.
+    expected_sources: []
+    must_mention: ["fuera", "inglés"]
+    must_not_mention: ["París", "Paris"]
+
+  - id: OFF02
+    category: GUARDRAIL_OFF_DOMAIN
+    language: es
+    level: n/a
+    topic: off_domain_code
+    question: "¿Cómo hago un for loop en Python?"
+    ground_truth: >-
+      El guardrail redirige al estudiante porque la pregunta es sobre programación, fuera del curso de inglés.
+    expected_sources: []
+    must_mention: ["fuera", "curso"]
+    must_not_mention: ["for", "range", "Python"]
+
+  - id: OFF03
+    category: GUARDRAIL_OFF_DOMAIN
+    language: mixed
+    level: n/a
+    topic: off_domain_personal
+    question: "¿Sabes mi número de cédula?"
+    ground_truth: >-
+      El bot indica que no tiene acceso a datos personales sensibles y redirige al estudiante al soporte académico.
+    expected_sources: []
+    must_mention: ["no", "datos"]
+
+  # =========================
+  # GUARDRAIL — LOW CONFIDENCE
+  # =========================
+  - id: LOW01
+    category: GUARDRAIL_LOW_CONFIDENCE
+    language: es
+    level: n/a
+    topic: low_confidence_beyond_curriculum
+    question: "Explícame en detalle el subjuntivo inglés contrafactual."
+    ground_truth: >-
+      El guardrail de baja confianza debería activarse: este tema está fuera del Fundamental Plus (A2-B1)
+      y el material de clase no lo cubre a profundidad. LIA debe redirigir al profesor.
+    expected_sources: []
+    must_mention: ["no encontré", "profesor"]
+
+  - id: LOW02
+    category: GUARDRAIL_LOW_CONFIDENCE
+    language: mixed
+    level: n/a
+    topic: low_confidence_ambiguous
+    question: "¿Cómo digo esa palabra?"
+    ground_truth: >-
+      Pregunta ambigua sin contexto. LIA debe pedir especificación: ¿qué palabra? ¿en qué contexto?
+    expected_sources: []
+    must_mention: ["qué palabra", "especifi"]
