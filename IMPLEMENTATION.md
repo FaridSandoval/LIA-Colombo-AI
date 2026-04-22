@@ -13,7 +13,7 @@ Pregunta
   → [Parent lookup]  child chunks ↦ parent chunks (small-to-big)
   → [Guardrail baja confianza]
   → [System prompt estructurado + few-shot + contexto]
-  → [LLM]  Gemma 2 9B / Llama 3.1 8B / Qwen 2.5 7B (seleccionable)
+  → [LLM]  Gemma 2 9B / Llama 3.1 8B / Qwen 3.5 9B (seleccionable)
   → [Respuesta + citaciones]
   → [Trace en LangFuse]
   → [Historial persistente + feedback 👍/👎]
@@ -33,7 +33,7 @@ uv sync
 # LLM principal (uno de los tres candidatos del benchmark)
 ollama pull gemma2:9b-instruct-q4_K_M
 ollama pull llama3.1:8b-instruct-q4_K_M
-ollama pull qwen2.5:7b-instruct-q4_K_M
+ollama pull qwen3.5:9b
 
 # LLM utilitario (guardrails, rewriting, contextual retrieval)
 ollama pull qwen2.5:3b-instruct-q4_K_M

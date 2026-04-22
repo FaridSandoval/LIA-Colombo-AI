@@ -62,7 +62,7 @@ LLM_TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", 0.2))
 LLM_BENCHMARK_CANDIDATES = [
     "gemma2:9b-instruct-q4_K_M",
     "llama3.1:8b-instruct-q4_K_M",
-    "qwen2.5:7b-instruct-q4_K_M",
+    "qwen3.5:9b",
 ]
 
 # LLM pequeño y rápido para tareas auxiliares (routing, contextual retrieval, guardrails)
