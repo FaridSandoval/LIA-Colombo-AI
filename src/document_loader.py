@@ -10,6 +10,7 @@ import json
 import logging
 from pathlib import Path
 from typing import List, Tuple
+import yaml
 
 import pandas as pd
 from langchain_core.documents import Document
@@ -119,11 +120,10 @@ def process_excel_by_rows(file_path) -> List[Document]:
 # Text files (PDF/TXT/MD) → parent + child
 # ==========================================
 def _load_text_documents() -> List[Document]:
-    """Carga PDF, TXT, MD desde RAW_DATA_DIR (sin split todavía)."""
+    """Carga PDF/TXT desde RAW_DATA_DIR; para .md parsea frontmatter YAML."""
     extensions = {
         "*.pdf": PyPDFLoader,
         "*.txt": TextLoader,
-        "*.md": TextLoader,
     }
     docs = []
     for glob_pattern, loader_cls in extensions.items():
@@ -135,12 +135,38 @@ def _load_text_documents() -> List[Document]:
         except Exception as e:
             logger.warning(f"Error cargando {glob_pattern}: {e}")
             loaded = []
-        # Enriquecer metadata con inferencia del nombre de archivo
         for d in loaded:
             src = d.metadata.get("source", "")
             d.metadata.update(_infer_unit_metadata(src))
             d.metadata["source_type"] = "book"
         docs.extend(loaded)
+
+    for md_file in sorted(RAW_DATA_DIR.glob("*.md")):
+        try:
+            text = md_file.read_text(encoding="utf-8")
+            metadata = {"source": str(md_file), "source_type": "book"}
+            if text.startswith("---"):
+                end_idx = text.find("\n---", 3)
+                if end_idx != -1:
+                    fm_raw = text[3:end_idx]
+                    body = text[end_idx + 4:].lstrip("\n")
+                    try:
+                        fm = yaml.safe_load(fm_raw) or {}
+                        for k, v in fm.items():
+                            metadata[k] = ", ".join(v) if isinstance(v, list) else v
+                    except Exception as yaml_err:
+                        logger.warning(f"Frontmatter YAML inválido en {md_file.name}: {yaml_err}")
+                        body = text
+                        metadata.update(_infer_unit_metadata(str(md_file)))
+                else:
+                    body = text
+                    metadata.update(_infer_unit_metadata(str(md_file)))
+            else:
+                body = text
+                metadata.update(_infer_unit_metadata(str(md_file)))
+            docs.append(Document(page_content=body, metadata=metadata))
+        except Exception as e:
+            logger.warning(f"Error cargando {md_file.name}: {e}")
     return docs
 
 
