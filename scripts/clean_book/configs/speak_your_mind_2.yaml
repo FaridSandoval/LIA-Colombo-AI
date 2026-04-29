@@ -1,0 +1,77 @@
+# Heurísticas específicas del Speak Your Mind 2 Teacher's Edition.
+# CALIBRADAS contra audit del PDF real (204 páginas).
+
+book_id: speak_your_mind_2
+book_title: Speak Your Mind 2 Teacher's Edition
+target_cycle: Fundamental Plus
+
+# ---- Detección de fronteras de unidades ----
+unit_boundary:
+  patterns:
+    - "^Unit\\s+(\\d+)\\s*[—\\-:]?\\s*(.+)$"
+    - "^UNIT\\s+(\\d+)\\b"
+    - "^(\\d+)\\s+([A-Z][A-Za-z' !?]+)$"
+  min_font_size: 30.0  # los Unit headers reales son ≥54pt
+
+# ---- Detección de Lessons / secciones internas ----
+lesson_boundary:
+  patterns:
+    - "^Lesson\\s+(\\d+)([A-Za-z])?\\s*[—\\-:]?\\s*(.*)$"
+    - "^(\\d+[A-Za-z])\\s+(.+)$"
+  min_font_size: 10.5  # body text es ~8.6pt
+
+# ---- Identificación de secciones funcionales dentro de una Lesson ----
+section_keywords:
+  vocabulary: ["vocabulary", "vocab", "word power", "word bank"]
+  grammar: ["grammar", "grammar focus", "language focus"]
+  listening: ["listening", "listen"]
+  speaking: ["speaking", "speak", "conversation", "pronunciation"]
+  reading: ["reading", "read"]
+  writing: ["writing", "write"]
+  practice: ["practice", "exercise", "activity", "your turn"]
+  review: ["review", "self-check", "checkpoint", "what i can do"]
+
+# ---- Teacher Notes ----
+teacher_notes:
+  text_markers:
+    - "Teaching Tip"
+    - "Teacher's Notes"
+    - "Answer Key"
+    - "Background Note"
+    - "Extra Activity"
+    - "Cultural Note"
+    - "Language Note"
+    - "Method"
+    - "Lesson Aim"
+    - "Warm-up"
+    - "Wrap-up"
+    - "Differentiation"
+    - "step-by-step"
+  use_background_color: false
+  sidebar_width_ratio_max: 0.45
+
+# ---- Limpieza de ruido ----
+noise:
+  drop_line_patterns:
+    - "^Page\\s+\\d+$"
+    - "^\\d+$"
+    - "^Speak Your Mind\\s+\\d+\\s+TE.*$"
+    - "^©\\s*\\d{4}.*$"
+    - "^ISBN.*$"
+    - "^www\\.\\S+\\.\\S+$"
+    - "^Ucalearn\\.com$"
+    - "^[\\s\\W]+$"
+  repeated_line_min_pages: 5  # si aparece en 5+ páginas, es boilerplate
+
+# ---- Tablas gramaticales ----
+tables:
+  extract_settings:
+    vertical_strategy: lines
+    horizontal_strategy: lines
+    snap_tolerance: 3
+
+# ---- Salida ----
+output:
+  filename_template: "fundamental_plus_unit{unit:02d}_{slug}.md"
+  include_frontmatter: true
+  todo_marker: "<!-- TODO: revisar -->"

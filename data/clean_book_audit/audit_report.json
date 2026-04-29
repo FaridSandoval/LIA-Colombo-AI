@@ -1,0 +1,196 @@
+{
+  "summary": {
+    "n_pages": 204,
+    "n_blocks": 5227,
+    "n_tables": 1000,
+    "blocks_per_page_mean": 25.62,
+    "bold_ratio": 0.285,
+    "italic_ratio": 0.01
+  },
+  "font_size_distribution": {
+    "min": 1.14,
+    "p10": 6.37,
+    "p50_median": 8.55,
+    "p90": 11.0,
+    "p99": 19.0,
+    "max": 90.76,
+    "recommendation": {
+      "body_text_size_estimate": 8.6,
+      "lesson_header_min_estimate": 11.0,
+      "unit_header_min_estimate": 54.9,
+      "comment": "Si los headers detectados son muy pocos, baja unit_header_min. Si capturan texto del cuerpo, súbelo. p99 suele ser un buen punto de partida para 'lesson'; (p99+max)/2 para 'unit'."
+    }
+  },
+  "top_fonts": [
+    [
+      "AFAMEM+AvenirLTStd-Book",
+      1781
+    ],
+    [
+      "AFBAEL+AvenirLTStd-Light",
+      1286
+    ],
+    [
+      "AFAMEN+AvenirLTStd-Heavy",
+      762
+    ],
+    [
+      "AFGGKB+AvenirLTStd-Black",
+      566
+    ],
+    [
+      "Courier",
+      204
+    ],
+    [
+      "AFHCHA+ACaslonPro-Regular",
+      112
+    ],
+    [
+      "AFAMEL+AvenirLTStd-Black",
+      94
+    ],
+    [
+      "AFAMFL+DINMittelschriftStd",
+      76
+    ],
+    [
+      "AFGGKC+AvenirLTStd-Medium",
+      76
+    ],
+    [
+      "AFCPLL+Avenir-Book",
+      42
+    ]
+  ],
+  "candidate_unit_headers": [],
+  "candidate_lesson_headers": [
+    [
+      204,
+      "The course includes:\n•  Video content that connects language practice to real li",
+      12.0
+    ]
+  ],
+  "likely_boilerplate": [
+    [
+      "Ucalearn.com",
+      204
+    ],
+    [
+      "step-by-step",
+      68
+    ],
+    [
+      "instructions.",
+      55
+    ],
+    [
+      "UNIT",
+      28
+    ],
+    [
+      "SPEAKING",
+      26
+    ],
+    [
+      "b",
+      17
+    ],
+    [
+      "a",
+      17
+    ],
+    [
+      "Step-by-Step Instructions",
+      15
+    ],
+    [
+      "c",
+      15
+    ],
+    [
+      "for AUDIO SCRIPT.",
+      15
+    ],
+    [
+      "2",
+      13
+    ],
+    [
+      "GO TO page vi",
+      13
+    ],
+    [
+      "d",
+      13
+    ],
+    [
+      "MMAKE IT DIGITAL",
+      13
+    ],
+    [
+      "CULTURE NOTE",
+      13
+    ],
+    [
+      "Student’s Book Audio Script",
+      13
+    ],
+    [
+      "3",
+      12
+    ],
+    [
+      "GO TO page xxDISCUSS & SHARE",
+      12
+    ],
+    [
+      "LESSON 1",
+      12
+    ],
+    [
+      "LESSON 2",
+      12
+    ],
+    [
+      "LISTENINGGO TO page xi",
+      12
+    ],
+    [
+      "LESSON 3",
+      12
+    ],
+    [
+      "GO TO page xv",
+      12
+    ],
+    [
+      "GO TO  pagexvii",
+      12
+    ],
+    [
+      "VOCABULARYreview",
+      12
+    ],
+    [
+      "SCORE:    / 10",
+      12
+    ],
+    [
+      "SCORE:     / 10",
+      12
+    ],
+    [
+      "✓",
+      12
+    ],
+    [
+      "1",
+      11
+    ],
+    [
+      "4",
+      11
+    ]
+  ]
+}
