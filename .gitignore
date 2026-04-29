@@ -16,6 +16,12 @@ faiss_index_lia/
 # --- Binarios externos ---
 src/bin/
 
+# --- Índices regenerables ---
+data/chroma_db/
+data/parents.jsonl
+data/context_cache.json
+data/_backup_*/
+
 # --- Otros ---
 .DS_Store
 # Claude Code local config
