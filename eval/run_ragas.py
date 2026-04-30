@@ -2,7 +2,7 @@
 Benchmark del pipeline LIA con RAGAS.
 
 Uso:
-    python -m eval.run_ragas --llm gemma2:9b-instruct-q4_K_M
+    python -m eval.run_ragas --llm gemma2:9b
     python -m eval.run_ragas --all   # corre los 3 candidatos secuencialmente
 
 Métricas RAGAS:

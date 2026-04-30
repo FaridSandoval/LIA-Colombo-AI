@@ -30,13 +30,13 @@ uv sync
 ### 2. Ollama — pull de modelos
 
 ```bash
-# LLM principal (uno de los tres candidatos del benchmark)
-ollama pull gemma2:9b-instruct-q4_K_M
-ollama pull llama3.1:8b-instruct-q4_K_M
-ollama pull qwen3.5:9b
+# LLM principal y utilitario (modelo disponible actualmente)
+ollama pull gemma2:9b
 
-# LLM utilitario (guardrails, rewriting, contextual retrieval)
-ollama pull qwen2.5:3b-instruct-q4_K_M
+# Futuros candidatos para benchmark RAGAS (requieren pull manual):
+# ollama pull gemma2:9b-instruct-q4_K_M
+# ollama pull llama3.1:8b-instruct-q4_K_M
+# ollama pull qwen2.5:3b-instruct-q4_K_M  (utilitario liviano)
 ```
 
 ### 3. Embeddings y re-ranker (HuggingFace, se bajan al primer uso)
@@ -89,9 +89,9 @@ cp .env.example .env
 
 ```bash
 # Un modelo específico
-python -m eval.run_ragas --llm gemma2:9b-instruct-q4_K_M
+python -m eval.run_ragas --llm gemma2:9b
 
-# Los tres candidatos
+# Todos los candidatos configurados en LLM_BENCHMARK_CANDIDATES
 python -m eval.run_ragas --all
 ```
 
@@ -133,7 +133,7 @@ conversation, exercises, y 5 guardrail cases (off-domain + low-confidence).
 ## Verificación end-to-end
 
 1. `uv sync`
-2. `ollama pull gemma2:9b-instruct-q4_K_M qwen2.5:3b-instruct-q4_K_M`
+2. `ollama pull gemma2:9b`
 3. `docker compose up -d` (si usas LangFuse) → llenar `.env`
 4. Poner archivos en `data/raw/` y `data/user/estudiantes_dummies.xlsx`
 5. `uv run streamlit run app.py` → login admin → "Re-indexar"
