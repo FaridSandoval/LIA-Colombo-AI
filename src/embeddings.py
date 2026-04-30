@@ -39,5 +39,7 @@ def create_or_load_vectorstore(documents=None) -> Chroma:
         persist_directory=str(CHROMA_DB_DIR),
     )
     if documents:
-        vector_store.add_documents(documents)
+        batch_size = 5000
+        for i in range(0, len(documents), batch_size):
+            vector_store.add_documents(documents[i : i + batch_size])
     return vector_store
