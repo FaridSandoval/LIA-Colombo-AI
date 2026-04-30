@@ -21,6 +21,8 @@ data/chroma_db/
 data/parents.jsonl
 data/context_cache.json
 data/_backup_*/
+data/parent_docs/
+data/contextual_cache/
 
 # --- Otros ---
 .DS_Store
