@@ -104,7 +104,17 @@ if not st.session_state.logged_in or st.session_state.user_info is None:
 user_info = st.session_state.user_info
 student_id = str(user_info.get("ID Number", "anon"))
 
-st.title(f"🤖 Tutor IA — Hola, {user_info['Student Name']}")
+# Lógica para extraer el primer nombre de pila (asumiendo APELLIDO APELLIDO NOMBRE)
+nombre_completo = user_info.get('Student Name', 'Estudiante')
+partes_nombre = nombre_completo.split()
+
+# Si tiene 3 o más palabras, tomamos la tercera (el nombre). Si no, tomamos la primera.
+if len(partes_nombre) >= 3:
+    primer_nombre_pila = partes_nombre[2].title()
+else:
+    primer_nombre_pila = partes_nombre[0].title()
+
+st.title(f"🤖 LIA — Hola, {primer_nombre_pila}")
 
 # ==========================================
 # SIDEBAR

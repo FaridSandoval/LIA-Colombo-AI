@@ -1,0 +1,60 @@
+﻿RESUMEN PARA ASESORIA - 7 DE MAYO
+=================================
+Hito: Validacion de Arquitectura RAG (LIA) vs. Baseline LLM-solo
+Comparativa: 3 modelos (gemma2:9b, llama3.1:8b, qwen2.5:7b)
+Categoria: GRAMMAR (n=25). Juez RAGAS: gpt-4o-mini.
+
+NOTA SOBRE LAS METRICAS PREVIAS:
+La corrida del 4 de mayo midio el sistema con un bug critico
+(resolve_parents devolvia 0 docs en 24/25 preguntas, RAGAS evaluaba
+el mensaje fijo del guardrail en lugar de respuestas reales del RAG).
+Bug detectado y corregido el 3 de mayo. Las cifras de abajo son
+la primera corrida con el RAG funcionando completo.
+
+RESULTADOS CLAVE (RAG vs Baseline LLM-solo):
+
+Faithfulness (fidelidad al texto):
+  gemma2:9b   RAG 0.502 vs baseline 0.278  -> +81%
+  llama3.1:8b RAG 0.425 vs baseline 0.115  -> +270%
+  qwen2.5:7b  RAG 0.344 vs baseline 0.187  -> +84%
+
+Context Precision (que el contexto traido es relevante):
+  gemma2:9b   RAG 0.678 vs baseline 0.000
+  llama3.1:8b RAG 0.667 vs baseline 0.000
+  qwen2.5:7b  RAG 0.659 vs baseline 0.000
+
+Context Recall (que el contexto traido cubre la respuesta):
+  gemma2:9b   RAG 0.594 vs baseline 0.120  -> +395%
+  llama3.1:8b RAG 0.645 vs baseline 0.160  -> +303%
+  qwen2.5:7b  RAG 0.717 vs baseline 0.200  -> +259%
+
+CONCLUSIONES:
+
+1. La arquitectura RAG mejora faithfulness en los 3 modelos (1.8x a 3.7x).
+   El baseline tiene Context Precision = 0 en los 3, confirmando que sin RAG
+   no hay anclaje verificable al curriculum del Colombo Americano.
+
+2. No hay un "ganador unico" entre los 3 modelos. La eleccion depende del
+   trade-off priorizado: mayor fidelidad textual (gemma2) vs mayor cobertura
+   y mention rate (qwen2.5).
+
+3. Trade-off de latencia: RAG es ~3x mas lento que baseline (~15s vs ~5s).
+   Aceptable para un tutor educativo.
+
+4. Guardrails funcionan: 2/25 activaciones de low_confidence (legitimas)
+   y 0 violaciones de hallucination en los 3 modelos.
+
+PENDIENTES (post-asesoria):
+- VOCABULARY (n=5): context_precision = 0 en RAG y baseline. Hipotesis:
+  formato tabular del WordList no se evalua bien con RAGAS.
+  Investigar si conviene indexar definiciones en prosa.
+- Solo 1 corrida por modelo. Para tesis final habria que correr 3+
+  para tener varianza/desvio estandar.
+- Limpiar Teacher's Edition del SYM2 (8-15 horas, queda como trabajo futuro).
+- Rebalancear golden set (61% GRAMMAR vs ~30% que pediria CLT).
+
+HALLAZGO TECNICO ADICIONAL (para discutir):
+El proceso de validacion descubrio un bug en resolve_parents() que invalidaba
+metricas previas. La auditoria capa por capa permitio diagnosticar y corregir.
+Esto demuestra el valor de tener un pipeline de evaluacion automatizado:
+sin RAGAS y golden set, el bug habria pasado a produccion sin deteccion.

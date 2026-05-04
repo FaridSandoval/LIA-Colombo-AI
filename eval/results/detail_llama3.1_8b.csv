@@ -1,0 +1,87 @@
+llm_model,mode,id,category,language,level,topic,question,ground_truth,answer,guardrail,latency_s,mention_rate,mentions_hit,mentions_missed,violations
+llama3.1:8b,rag,V01,VOCABULARY,es,A2,vocabulary_family,¿Cómo se dice 'cuñado' en inglés?,"Se dice 'brother-in-law'. Si es la esposa del hermano, es 'sister-in-law'.","La pregunta del estudiante es interesante, pero parece que no está directamente relacionada con el contenido de los fragmentos proporcionados. Sin embargo, puedo intentar ayudarlo a encontrar la respuesta.
+
+Primero, veamos si hay alguna palabra similar al concepto de ""cuñado"" en inglés. En el Fragmento 1, se menciona la palabra ""siblings"", que significa hermanos y hermanas. No es exactamente lo mismo, pero podría estar relacionada con la idea de familiares cercanos.
+
+En el Fragmento 2, se habla de un ""roommate"", que es alguien con quien compartes una habitación o apartamento. Esto no tiene relación directa con el concepto de cuñado.
+
+En el Fragmento 3, hay una conversación sobre familias y hermanos, pero no se menciona la palabra ""cuñado"".
+
+Finalmente, en el Fragmento 4, se define la expresión ""large family"" como un grupo de personas que viven juntas y están relacionadas entre sí. Aunque esto es más amplio que el concepto de cuñado, podría estar relacionado con la idea de familiares cercanos.
+
+Dado que no hay una palabra directa para ""cuñado"" en los fragmentos proporcionados, puedo sugerir algunas opciones:
+
+* En inglés, a un cuñado se le puede llamar ""brother-in-law"" (hermano político) o ""sister-in-law"" (hermana política).
+* También se pueden usar las expresiones ""husband's brother"" (el hermano del esposo) o ""wife's sister"" (la hermana de la esposa).
+
+Es importante tener en cuenta que estas son solo sugerencias y no hay una palabra exacta para ""cuñado"" en inglés.
+
+Ahora, te hago una pregunta: ¿cómo crees que se podría traducir el concepto de ""cuñado"" al inglés?",,21.536,1.0,brother-in-law,,
+llama3.1:8b,rag,V02,VOCABULARY,es,A2,vocabulary_food,¿Cuál es la diferencia entre 'supper' y 'dinner'?,"'Dinner' es la comida principal del día (suele ser la cena). 'Supper' es una cena más ligera, a veces usada como sinónimo de dinner en contextos familiares.","¡Hola! Me alegra ayudarte con tu pregunta sobre ""supper"" y ""dinner"".
+
+En inglés, tanto ""supper"" como ""dinner"" se refieren a comidas principales en diferentes momentos del día. La principal diferencia entre ellos es el momento de la comida.
+
+*   **Dinner** generalmente se refiere a la comida principal de la noche, después de las 5-6 pm.
+*   **Supper**, por otro lado, puede ser una comida más ligera o una cena en cualquier momento del día, pero especialmente antes de acostarse. A veces, supper también se utiliza para referirse a una comida en el medio de la tarde.
+
+Por ejemplo:
+
+*   ""We're having dinner at 7 pm tonight."" (Tenemos cena a las 7 pm esta noche.)
+*   ""I'll have supper before I go to bed."" (Me comeré antes de acostarme.)
+
+Es importante tener en cuenta que, aunque ambos términos se utilizan para referirse a comidas principales, la elección entre ellos depende del contexto y la región. En algunos países, como Estados Unidos, ""supper"" es más comúnmente utilizado para referirse a una comida ligera o una cena, mientras que en otros países, como el Reino Unido, ""tea"" (té) se utiliza para referirse a una comida en el medio de la tarde.
+
+Ahora, practica tú: ¿cómo harías la pregunta ""¿Qué hora es la cena?"" en inglés?
+
+📚 Fuentes:
+- libro_fundamental_plus.pdf (Unidad 2, Nivel A2)",,16.788,1.0,"dinner, supper",,
+llama3.1:8b,rag,V03,VOCABULARY,mixed,A2,false_friends,¿'Assist' significa asistir a una reunión?,"No. 'Assist' significa ayudar, no asistir. Para decir 'asistir a una reunión' se usa 'attend a meeting'. Es un falso amigo común.","No encontré información suficiente sobre **""¿'Assist' significa asistir a una reunión?""** en tus materiales de clase del ciclo Fundamental Plus.
+
+Te recomiendo:
+- Revisar el índice de tu libro por el tema relacionado.
+- Consultar con tu profesor en la próxima clase.
+- Reformular tu pregunta siendo más específico(a) (por ejemplo, mencionando la unidad o tema).
+
+¿Puedes darme más detalles sobre lo que necesitas aprender?",low_confidence,8.709,0.0,,"attend, help",asistir
+llama3.1:8b,rag,V04,VOCABULARY,en,B1,phrasal_verbs,What does 'give up' mean?,'Give up' means to stop trying or to quit. Example: She gave up smoking last year.,"¡Hola! Me alegra ayudarte a entender el significado de ""give up"".
+
+""Give up"" es un verbo que se utiliza para describir la acción de dejar algo, detenerse o abandonar una tarea, un objetivo o una situación. Puede tener varios significados dependiendo del contexto en el que se use.
+
+Ejemplos:
+
+* Si estás intentando aprender japonés y decides que es demasiado difícil, puedes decir: ""I gave up trying to learn Japanese."" (Me rindí a aprender japonés.)
+* Si tienes un trabajo que no te gusta y decides dejarlo, puedes decir: ""Sue got bored with her job and decided to give it up."" (Sue se aburrió de su trabajo y decidió dejarlo.)
+
+En resumen, ""give up"" significa dejar algo o detenerse en una tarea o situación.
+
+Ahora, practica tú: ¿cómo harías la pregunta ""¿Por qué no me rindo a aprender este idioma?"" en inglés?
+
+📚 Fuentes:
+- libro_fundamental_plus.pdf (Unidad 2, Nivel A2)",,14.711,0.0,,"quit, stop",
+llama3.1:8b,rag,V05,VOCABULARY,es,A2,vocabulary_weather,¿Cómo describo el clima en inglés?,"Se usa 'It is' + adjetivo: It is sunny, It is cloudy, It is raining, It is cold, It is hot. Para temperatura: It is 25 degrees.","¡Hola! Me alegra ayudarte con tu pregunta.
+
+Para describir el clima en inglés, puedes usar varias expresiones y palabras. Aquí te presento algunas opciones:
+
+* Si el clima es horrible o malo, puedes decir: ""What a terrible weather!"" (¿Qué tiempo tan malo?)
+* Si está lloviendo, puedes decir: ""It's raining"" o ""There's heavy rain"".
+* Si hace calor, puedes decir: ""It's very hot today"" o ""The sun is shining brightly"".
+* Si hace frío, puedes decir: ""It's cold outside"" o ""Brrr, it's chilly"".
+
+Puedes también usar algunas expresiones para describir el clima de manera más detallada:
+
+* ""The weather is lovely today"" (El tiempo es encantador hoy)
+* ""It's a beautiful day"" (Es un día hermoso)
+* ""The sun is shining brightly"" (El sol está brillando intensamente)
+
+Recuerda que puedes usar estas expresiones en diferentes contextos y situaciones para describir el clima.
+
+Ejemplos:
+
+* ""What a terrible weather!"" (¿Qué tiempo tan malo?)
+* ""It's raining, so let's stay inside."" (Está lloviendo, así que vamos a quedarnos dentro.)
+* ""The sun is shining brightly today. Let's go for a walk."" (El sol está brillando intensamente hoy. Vamos a dar un paseo.)
+
+Ahora es tu turno: ¿cómo describirías el clima en una ciudad que siempre está nublado?
+
+📚 Fuentes:
+- libro_fundamental_plus.pdf (Unidad 2, Nivel A2)",,15.83,0.3333333333333333,rain,"sunny, cloudy",

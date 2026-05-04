@@ -1,0 +1,511 @@
+llm_model,mode,id,category,language,level,topic,question,ground_truth,answer,guardrail,latency_s,mention_rate,mentions_hit,mentions_missed,violations
+gemma2:9b,baseline,G01,GRAMMAR,es,A2,present_simple_auxiliaries,¿Cuándo uso 'do' y cuándo uso 'does'?,"En el presente simple, 'do' se usa con los sujetos I, you, we, they para formar preguntas y negaciones. 'Does' se usa con la tercera persona singular (he, she, it). Ejemplos: Do you live here? / Does she work?","""Do"" and ""does"" are both auxiliary verbs used to form questions and negative sentences in the simple present tense. 
+
+Here's a breakdown:
+
+**Use ""do"" when:**
+
+* **The subject is plural (more than one person or thing):**
+
+   *  They **do** their homework every day.
+   *  My friends **do** yoga on Tuesdays.
+
+* **The subject is I:**
+
+   *  **I do** my best.
+   *  **I do** like chocolate ice cream.
+
+**Use ""does"" when:**
+
+* **The subject is singular (one person or thing):**
+
+   *  He **does** his chores every week.
+   *  She **does** the laundry on Sundays.
+   *  The cat **does** sleep a lot.
+
+
+**Remember:** 
+
+* ""Does"" is simply the third-person singular form of ""do"". It's used with singular subjects like he, she, it, and names.
+* In questions, you always use ""do"" or ""does"" followed by the base form of the verb.
+
+   *  **Do** you play the guitar?
+   *  **Does** she sing in the choir?
+
+
+Let me know if you have any other questions!",,6.74,1.0,"I, you, we, they, he, she, it",,
+gemma2:9b,baseline,G02,GRAMMAR,mixed,A2,present_simple_third_person_s,¿Por qué se le pone 's' a los verbos con he/she/it en presente?,"En presente simple, cuando el sujeto es he, she o it (tercera persona singular), se añade -s o -es al verbo. Ejemplos: He works / She studies / It rains.","En inglés, se le añade una ""s"" al final de los verbos en tercera persona singular (he/she/it) en el presente simple para indicar que la acción está siendo realizada por una sola persona o cosa. 
+
+**Ejemplo:**
+
+* **I walk** (Yo camino)
+* **He walks** (Él camina)
+* **She walks** (Ella camina)
+* **It walks** (Eso camina)
+
+Esta regla se aplica a la mayoría de los verbos regulares en inglés. Los verbos irregulares, por otro lado, tienen formas especiales para el presente simple en tercera persona singular.
+
+
+Espero que esto te ayude! 
+",,4.42,0.6,"he, she, it","-s, -es",
+gemma2:9b,baseline,G03,GRAMMAR,en,A2,present_simple_vs_continuous,What is the difference between 'I work' and 'I am working'?,'I work' is present simple — it describes habits or permanent situations. 'I am working' is present continuous — it describes actions happening now or around now.,"The difference between ""I work"" and ""I am working"" lies in their **tense** and **meaning**:
+
+* **""I work""** is in the **present simple tense**. It indicates a **general truth or habitual action**. 
+
+    * Example: ""I work at a bank."" (This means you have a job at a bank, generally speaking.)
+    * Example: ""I work out every day."" (This means you exercise regularly.)
+
+* **""I am working""** is in the **present continuous tense**. It indicates an **action happening right now**. 
+
+    * Example: ""I am working on a project."" (This means you are currently engaged in a project.)
+    * Example: ""I am working late tonight."" (This means your work is ongoing at this moment.)
+
+
+Essentially, use ""I work"" for general statements about your job or routine, and use ""I am working"" to describe an action happening at this very moment.",,5.402,1.0,"habit, now",,
+gemma2:9b,baseline,G04,GRAMMAR,es,A2,past_simple_regular_verbs,¿Cómo se forma el pasado simple de los verbos regulares?,"Se añade -ed al final del verbo base. Si termina en -e, sólo se añade -d (live → lived). Si termina en consonante + y, se cambia por -ied (study → studied).","El pasado simple de los verbos regulares se forma **añadiendo la terminación ""-ed"" al infinitivo del verbo**.
+
+**Ejemplo:**
+
+* **Infinitivo:** walk (caminar)
+* **Pasado simple:** walked (caminé)
+
+**Algunos ejemplos más:**
+
+* **Infinitivo:** play (jugar)
+* **Pasado simple:** played (jugue)
+
+* **Infinitivo:** talk (hablar)
+* **Pasado simple:** talked (hablé)
+
+* **Infinitivo:** study (estudiar)
+* **Pasado simple:** studied (estudié)
+
+
+**Recuerda:** 
+
+* La terminación ""-ed"" se pronuncia /id/ después de una palabra que termina en sonido consonántico, y /t/ después de una palabra que termina en vocal.
+* Algunos verbos irregulares tienen formas especiales en pasado simple.
+
+
+
+Espero que esto te ayude!",,5.232,0.3333333333333333,-ed,"-d, -ied",
+gemma2:9b,baseline,G05,GRAMMAR,es,A2,past_simple_irregular_verbs,¿Cuál es el pasado de 'go' y 'eat'?,El pasado simple de 'go' es 'went'. El pasado simple de 'eat' es 'ate'. Son verbos irregulares.,"El pasado simple de los verbos ""go"" y ""eat"" es:
+
+* **Go:** went
+* **Eat:** ate 
+
+
+Espero que esto te ayude. 😊
+",,2.762,1.0,"went, ate",,
+gemma2:9b,baseline,G06,GRAMMAR,mixed,A2,past_simple_negation,How do I say 'yo no fui a la fiesta' en past simple?,"Se dice 'I didn't go to the party'. En pasado simple, la negación usa el auxiliar 'did not' (didn't) + el verbo en base form (go, no went).","""Yo no fui a la fiesta"" is already in the past simple tense! 
+
+* **Yo** = I
+* **No fui** = I did not go (past simple of ""ir"")
+* **A la fiesta** = to the party
+
+
+Let me know if you have any other Spanish phrases you'd like help with! 😊  
+",,3.435,0.5,go,didn't,
+gemma2:9b,baseline,G07,GRAMMAR,es,B1,past_progressive,¿Cuándo se usa el past progressive?,"El past progressive (was/were + verb-ing) se usa para describir acciones en progreso en el pasado, especialmente cuando otra acción las interrumpe. Ejemplo: I was studying when she called.","El pasado progresivo, también conocido como ""past continuous"", se utiliza para describir acciones que estaban en progreso en un momento específico del pasado. 
+
+**Aquí hay algunos usos comunes:**
+
+* **Acciones en curso durante un punto de tiempo en el pasado:**
+
+> * Estaba estudiando inglés cuando me llamó mi amigo. (La acción de estudiar estaba en progreso cuando llegó la llamada)
+> * Eran las ocho de la mañana cuando salí del trabajo. (La acción de salir del trabajo estaba en progreso a las ocho de la mañana)
+
+* **Acciones que se interrumpieron por otra acción:**
+
+> * Estaba cocinando la cena cuando el teléfono sonó. (La acción de cocinar fue interrumpida por la llamada telefónica)
+> * Estábamos jugando al fútbol cuando empezó a llover. (La acción de jugar al fútbol fue interrumpida por la lluvia)
+
+* **Acciones que se estaban desarrollando durante un período de tiempo en el pasado:**
+
+> * Estaba leyendo un libro durante todo el fin de semana. (La acción de leer estaba en progreso durante todo el fin de semana)
+> * Estábamos viajando por Europa durante tres meses. (La acción de viajar estaba en progreso durante tres meses)
+
+
+**Recuerda que el pasado progresivo se forma con el verbo auxiliar ""to be"" en su forma pasada (""was"", ""were"") más el participio presente del verbo principal (-ing).**
+
+Espero que esto te ayude a entender cuándo usar el pasado progresivo.",,7.014,1.0,"was, were, -ing",,
+gemma2:9b,baseline,G08,GRAMMAR,mixed,B1,past_progressive_vs_past_simple,¿Diferencia entre 'I watched TV' y 'I was watching TV'?,"'I watched TV' (past simple) describe una acción completada en el pasado. 'I was watching TV' (past progressive) describe una acción en progreso en un momento del pasado, típicamente interrumpida por otra.","La diferencia entre ""I watched TV"" y ""I was watching TV"" radica en el tiempo que se describe:
+
+* **""I watched TV""** indica una acción completa en el pasado. Se refiere a un momento específico en el que viste televisión y terminó de hacerlo. Por ejemplo:
+
+> *Yesterday, I watched TV after dinner.* (Ayer vi la televisión después de cenar.)
+
+* **""I was watching TV""** indica una acción en progreso en el pasado. Se refiere a un momento específico en el que estabas viendo televisión, pero no necesariamente terminaste de hacerlo.  Por ejemplo:
+
+> *While I was watching TV, my friend called.* (Mientras estaba viendo la televisión, llamó mi amigo.)
+
+En resumen:
+
+* **""Watched""**: acción completa en el pasado
+* **""Was watching""**: acción en progreso en el pasado
+
+
+Espero que esto te ayude a entender la diferencia.",,5.172,0.5,progreso,completada,
+gemma2:9b,baseline,G09,GRAMMAR,es,B1,present_perfect,¿Cómo se forma el present perfect?,Se forma con el auxiliar have/has + el participio pasado (past participle) del verbo principal. Ejemplo: I have eaten / She has gone.,"El presente perfecto se forma con **""have/has"" + participio pasado del verbo**. 
+
+**Ejemplos:**
+
+* **He** has **eaten** lunch. (Él ha comido almuerzo.)
+* **She** has **finished** her homework. (Ella ha terminado su tarea.)
+* **They** have **seen** that movie before. (Ellos han visto esa película antes.)
+
+**Importante:**
+
+*  ""Have"" se usa con los pronombres ""I"", ""we"", ""you"", y ""they"".
+*  ""Has"" se usa con los pronombres ""he"", ""she"", y ""it"".
+
+
+El presente perfecto se utiliza para hablar de acciones que **comenzaron en el pasado y continúan hasta el presente**, o acciones que **terminaron en el pasado pero tienen consecuencias en el presente**. 
+
+**Ejemplos:**
+
+* I **have lived** in this city for five years. (He vivido en esta ciudad durante cinco años.)
+* She **has lost** her keys. (Ella ha perdido sus llaves.)
+
+
+Espero que esto te ayude a entender cómo se forma el present perfect.",,6.004,0.6666666666666666,"have, has",participle,
+gemma2:9b,baseline,G10,GRAMMAR,en,B1,present_perfect_for_since,When do I use 'for' and when do I use 'since'?,"'For' is used with a duration of time (for 3 years, for two hours). 'Since' is used with a specific point in time (since 2020, since Monday).","Both ""for"" and ""since"" are used to express duration or a period of time, but they have distinct meanings and usages:
+
+**For:**
+
+* **Indicates the length of time something has been happening.** It focuses on the duration.
+* **Used with a specific period of time (e.g., years, months, days).** 
+* **Example:** ""I've been living in London **for** five years."" (Emphasis on the 5 years)
+
+**Since:**
+
+* **Indicates a starting point in time.** It focuses on when something began.
+* **Used with a specific point in time (e.g., a date, a certain event).**
+* **Example:** ""I've been living in London **since** 2018."" (Emphasis on the year 2018 as the starting point)
+
+**Here's a helpful way to remember:**
+
+* **For:** Think of it like measuring something with a ruler. It tells you how long something lasts.
+* **Since:** Think of it like marking a specific point on a timeline. It tells you when something started.
+
+
+Let me know if you have any more questions or would like more examples!",,6.294,1.0,"duration, point in time",,
+gemma2:9b,baseline,G11,GRAMMAR,es,B1,present_perfect_vs_past_simple,¿Diferencia entre 'I have visited Paris' y 'I visited Paris'?,"'I have visited Paris' (present perfect) indica que lo has visitado alguna vez, sin especificar cuándo, y tiene relevancia ahora. 'I visited Paris' (past simple) refiere a un momento específico del pasado, ya cerrado.","La diferencia entre ""I have visited Paris"" y ""I visited Paris"" radica en el tiempo que se expresa:
+
+* **""I have visited Paris""** es una forma del presente perfecto. Indica que la acción de visitar París ya ocurrió, pero tiene relevancia en el presente. Por ejemplo, podrías decirlo para indicar que tienes experiencia en París o que te gusta recordar tu viaje.
+* **""I visited Paris""** es pasado simple. Indica que la acción de visitar París ocurrió en un momento específico del pasado y se considera finalizada. 
+
+Aquí hay algunos ejemplos para ilustrar la diferencia:
+
+* **""I have visited Paris twice.""** (He visitado París dos veces.) -  Se refiere a las visitas pasadas con relevancia en el presente.
+* **""I visited Paris last summer.""** (Visité París el verano pasado.) - Se refiere a una visita específica en el pasado.
+
+
+En resumen, ""have visited"" se usa para acciones que ocurrieron en el pasado pero tienen consecuencias o relevancia en el presente, mientras que ""visited"" se usa para acciones que ocurrieron en un momento específico del pasado y ya finalizaron.",,5.953,0.5,específico,specific,
+gemma2:9b,baseline,G12,GRAMMAR,es,A2,future_will_vs_going_to,¿Cuándo uso 'will' y cuándo uso 'going to'?,"'Will' se usa para decisiones espontáneas, predicciones sin evidencia y promesas. 'Going to' se usa para planes ya decididos y predicciones con evidencia presente.","Both ""will"" and ""going to"" are used to talk about the future, but they have slightly different meanings and uses.
+
+**Will:**
+
+* **Spontaneous decisions:** Used for actions decided on the spot. 
+    * Example: ""I'm feeling hungry. I think I **will** order pizza.""
+* **Predictions:** Expressing what you believe will happen in the future.
+    * Example: ""It looks like rain, it **will** probably be a wet day.""
+* **Promises and offers:** Making a promise or offering to do something.
+    * Example: ""I **will** help you with your homework.""
+
+**Going to:**
+
+* **Planned actions:** Used for actions that have already been decided on or planned.
+    * Example: ""We're **going to** visit my grandparents this weekend.""
+* **Predictions based on evidence:** Expressing what you think will happen based on current circumstances.
+    * Example: ""Look at those dark clouds! It's **going to** rain.""
+
+**Here's a table summarizing the differences:**
+
+| Feature | Will | Going to |
+|---|---|---|
+| Decision | Spontaneous | Planned |
+| Prediction | General belief | Based on evidence |
+| Usage | Promises, offers, spontaneous actions | Plans, predictions based on evidence |
+
+
+**Important Note:** Sometimes the difference between ""will"" and ""going to"" can be subtle. In some cases, both can be used interchangeably without a significant change in meaning. 
+
+Ultimately, the best way to choose between ""will"" and ""going to"" is to consider the context of the sentence and what you want to emphasize.",,7.765,0.6666666666666666,"spontaneous, plan",decisión,
+gemma2:9b,baseline,G13,GRAMMAR,es,A2,modal_can_could,¿Cómo se usa 'can' para pedir permiso?,'Can I…?' se usa para pedir permiso informalmente (Can I borrow your pen?). 'Could I…?' es una forma más cortés (Could I borrow your pen?).,"""Can"" se usa para pedir permiso en inglés.  
+
+Aquí hay algunos ejemplos:
+
+* **Can I use your phone?** (¿Puedo usar tu teléfono?)
+* **Can we go to the park?** (¿Podemos ir al parque?)
+* **Can I have a glass of water, please?** (¿Me puedes dar un vaso de agua, por favor?)
+
+
+Es importante recordar que ""can"" se usa para pedir permiso en situaciones donde la respuesta puede ser ""sí"" o ""no"". 
+
+Si quieres hacer una solicitud más formal, puedes usar ""May I..."" en lugar de ""Can I..."". Por ejemplo:
+
+* **May I use your phone?** (¿Puedo usar tu teléfono?)
+
+
+Espero que esto te ayude!
+",,4.684,0.5,Can I,Could I,
+gemma2:9b,baseline,G14,GRAMMAR,mixed,B1,modal_should_must,¿'Should' y 'must' significan lo mismo?,No. 'Should' expresa un consejo o recomendación (deberías hacerlo). 'Must' expresa una obligación fuerte o regla (tienes que hacerlo).,"No, ""should"" y ""must"" no significan exactamente lo mismo. Aunque ambos se usan para expresar obligación o recomendación, tienen matices diferentes:
+
+**Should:**
+
+* Se usa para dar una **recomendación o sugerencia**. Implica que algo es lo más apropiado o correcto a hacer en una situación, pero no es obligatorio.
+* A menudo se usa con un tono más suave y menos autoritario que ""must"".
+* Ejemplo: ""You should study for the exam."" (Deberías estudiar para el examen.)
+
+**Must:**
+
+* Se usa para expresar una **obligación o necesidad**. Implica que algo es absolutamente necesario hacer.
+* A menudo se usa en situaciones donde hay reglas, leyes o consecuencias claras.
+* Puede tener un tono más fuerte y autoritario que ""should"".
+* Ejemplo: ""You must wear a helmet when riding a bike."" (Debes usar un casco cuando montas en bicicleta.)
+
+**En resumen:**
+
+* **Should:** Sugerencia o recomendación
+* **Must:** Obligación o necesidad
+
+
+Espero que esto te ayude a entender la diferencia entre ""should"" y ""must"".",,5.94,0.25,obligación,"advice, obligation, consejo",
+gemma2:9b,baseline,G15,GRAMMAR,es,A2,articles_a_an,¿Cuándo uso 'a' y cuándo 'an'?,"'A' se usa antes de palabras que empiezan con sonido consonántico (a book, a university). 'An' se usa antes de palabras con sonido vocálico (an apple, an hour).","""A"" y ""an"" son artículos indefinidos en inglés, que se usan para referirse a una cosa o persona desconocida. 
+
+**La regla general es:**
+
+* **Use ""a"" antes de palabras que empiezan con una consonante.** (Ejemplo: a cat, a book, a house)
+* **Use ""an"" antes de palabras que empiezan con una vocal.** (Ejemplo: an apple, an orange, an hour)
+
+**Importante:** 
+
+* La pronunciación es clave.  Se considera la *pronunciación inicial* de la palabra, no la letra escrita. Por ejemplo, ""hour"" empieza con una vocal sonora (""o""), así que se usa ""an"".
+* **Excepciones:** Algunas palabras empiezan con una consonante silente (como en ""honest"" o ""university""). En estos casos, se sigue la regla del sonido inicial: ""a honest person"", ""an university student"".
+
+**Ejemplos:**
+
+* I saw **a** dog in the park.
+* She wants **an** apple for lunch.
+* He bought **a** new car.
+* There is **an** elephant in the zoo.
+
+
+Espero que esto te ayude a entender la diferencia entre ""a"" y ""an""!",,6.399,0.3333333333333333,consonant,"vowel, sound",
+gemma2:9b,baseline,G16,GRAMMAR,en,A2,prepositions_in_on_at,"When do I use 'in', 'on', and 'at' with time?","'In' is used with months, years, seasons (in July, in 2024). 'On' is used with days and dates (on Monday, on July 4th). 'At' is used with specific times (at 7 pm, at noon).","Here's a breakdown of when to use ""in,"" ""on,"" and ""at"" with time:
+
+**In:**
+
+* **Months, years, seasons, centuries:** *I was born **in** June.*  *The meeting is **in** 2024.* *We'll go skiing **in** winter.*
+* **Longer periods of time:** *She lived **in** England for five years.* *He studied **in** college for four years.*
+* **Specific days (when referring to the whole day):** *I have a meeting **in** Monday.*
+
+**On:**
+
+* **Days of the week:** *My birthday is **on** Friday.* *We're going to the beach **on** Saturday.*
+* **Dates:** *The party is **on** July 4th.* *She got married **on** December 25th.*
+* **Holidays:** *Christmas is **on** December 25th.*
+
+**At:**
+
+* **Specific times:** *I'll be there **at** 7:00 PM.* *The movie starts **at** 8:30 AM.*
+* **Exact points in time:** *We met **at** noon.* *She arrived **at** the airport **at** 10:00 AM.*
+
+**Exceptions and Considerations:**
+
+* Some people use ""in"" for specific times, especially when talking about a range of time. For example: *I'll be there **in** the morning.*
+* In British English, ""at"" is often used instead of ""on"" for days of the week.
+
+
+Let me know if you have any other questions or would like more examples!",,7.951,1.0,"month, day, time",,
+gemma2:9b,baseline,G17,GRAMMAR,es,A2,comparatives_superlatives,¿Cómo se forma el comparativo de 'big'?,El comparativo de 'big' es 'bigger' (regla de doblar la consonante final en adjetivos cortos CVC). El superlativo es 'the biggest'.,"El comparativo de ""big"" es **bigger**. 
+
+Por ejemplo:
+
+* My house is **bigger** than yours. (Mi casa es más grande que la tuya.)
+
+
+Let me know if you have any other words you'd like to know the comparative of! 😊
+",,3.183,0.5,bigger,biggest,
+gemma2:9b,baseline,G18,GRAMMAR,mixed,B1,comparatives_irregular,¿Cuál es el comparativo de 'good' y 'bad'?,"'Good' → 'better' (comparativo), 'the best' (superlativo). 'Bad' → 'worse' (comparativo), 'the worst' (superlativo). Son irregulares.","El comparativo de ""good"" es **better** y el de ""bad"" es **worse**. 
+
+
+Por ejemplo:
+
+* **Good:** This cake is good.
+* **Better:** This cake is **better** than the last one.
+* **Bad:** The weather is bad today.
+* **Worse:** The weather is **worse** than yesterday. 
+
+
+
+Espero que esto te ayude! 😊
+",,3.521,0.5,"better, worse","best, worst",
+gemma2:9b,baseline,G19,GRAMMAR,es,B1,first_conditional,¿Cómo se forma el primer condicional?,"Estructura: If + present simple, … will + base verb. Ejemplo: If it rains, I will stay home. Se usa para situaciones reales y posibles en el futuro.","El primer condicional, también conocido como condicional simple o presente de probabilidad, se forma con la siguiente estructura:
+
+**Sujeto + will/shall + verbo base + complemento.**
+
+* **Will/Shall:** son los verbos auxiliares que indican futuro. ""Will"" es más común en inglés general, mientras que ""shall"" se usa principalmente para ofrecer algo o hacer una promesa.
+* **Verbo base:** es la forma infinitiva del verbo sin ""to"". 
+* **Complemento:** puede ser un objeto directo, indirecto o una frase adverbial.
+
+**Ejemplos:**
+
+* If it rains tomorrow, I **will stay** at home. (Si llueve mañana, me quedaré en casa.)
+* She **will go** to the cinema if she has time. (Ella irá al cine si tiene tiempo.)
+* They **shall win** the game if they practice hard. (Ganarán el juego si entrenan duro.)
+
+**Puntos a recordar:**
+
+* El primer condicional se usa para hablar de acciones que pueden suceder en el futuro si ocurre una condición específica.
+* La condición suele ir expresada con ""if"" seguido del verbo en presente simple.
+
+
+Espero que esto te ayude a entender cómo se forma el primer condicional.",,6.402,0.6666666666666666,"if, will",present simple,
+gemma2:9b,baseline,G20,GRAMMAR,mixed,B1,second_conditional,¿Cuál es la diferencia entre first y second conditional?,"First conditional describe situaciones reales/posibles (If it rains, I will stay). Second conditional describe situaciones hipotéticas/irreales (If I had money, I would travel).","La diferencia entre el primer y segundo condicional radica en la probabilidad de que se cumpla la condición. 
+
+**Primer condicional (Present Simple + Will)**
+
+* Se usa para hablar de situaciones **reales y probables** en el futuro.
+* La consecuencia es algo que probablemente ocurrirá si se cumple la condición.
+
+**Ejemplos:**
+
+* If it rains tomorrow, I will stay at home. (Si llueve mañana, me quedaré en casa.)
+* If you study hard, you will pass the exam. (Si estudias duro, aprobarás el examen.)
+
+**Segundo condicional (Past Simple + Would)**
+
+* Se usa para hablar de situaciones **hipotéticas o imaginarias**, que no son probables en el futuro.
+* La consecuencia es algo que podría ocurrir si se cumpliera la condición, pero no es probable.
+
+**Ejemplos:**
+
+* If I won the lottery, I would travel the world. (Si ganara la lotería, viajaría por el mundo.)
+* If she studied English more, she would speak it fluently. (Si estudiara inglés más, lo hablaría con fluidez.)
+
+
+En resumen:
+
+* **Primer condicional:** Realidad probable.
+* **Segundo condicional:** Hipótesis improbable.
+
+
+
+Espero que esto te ayude a entender la diferencia entre el primer y segundo condicional.",,6.809,0.5,real,hypothetical,
+gemma2:9b,baseline,G21,GRAMMAR,es,A2,wh_questions,"¿Cómo formo preguntas con 'what', 'where', 'when'?",Estructura: Wh-word + auxiliar + sujeto + verbo base + complemento. Ejemplo: What do you do? / Where does she live? / When did they arrive?,"¡Claro que sí! 
+
+""What"", ""Where"" y ""When"" son palabras interrogativas muy comunes en inglés.  Aquí te explico cómo usarlas para formar preguntas:
+
+**1. What (Qué)**
+
+* Se usa para preguntar sobre cosas, personas, lugares, ideas o sentimientos.
+
+   * **Ejemplos:**
+      * What is your name? (¿Cómo te llamas?)
+      * What are you doing? (¿Qué estás haciendo?)
+      * What do you like to eat? (¿Qué te gusta comer?)
+      * What is the capital of France? (¿Cuál es la capital de Francia?)
+
+**2. Where (Dónde)**
+
+* Se usa para preguntar sobre lugares o posiciones.
+
+   * **Ejemplos:**
+      * Where are you from? (¿De dónde eres?)
+      * Where is the library? (¿Dónde está la biblioteca?)
+      * Where did you go yesterday? (¿A dónde fuiste ayer?)
+
+**3. When (Cuándo)**
+
+* Se usa para preguntar sobre tiempo o momentos específicos.
+
+   * **Ejemplos:**
+      * When is your birthday? (¿Cuándo es tu cumpleaños?)
+      * When will the movie start? (¿Cuándo empezará la película?)
+      * When did you arrive? (¿Cuándo llegaste?)
+
+
+**Recuerda:**
+
+* Para formar una pregunta con ""What"", ""Where"" o ""When"", siempre debes colocar la palabra interrogativa al principio de la oración.
+* Luego, sigue con el verbo auxiliar (do, does, did) y el sujeto.
+* Finalmente, agrega el resto de la frase.
+
+
+¡Espero que esto te ayude!",,7.741,1.0,"what, where, when",,
+gemma2:9b,baseline,G22,GRAMMAR,en,A2,yes_no_questions,How do I make yes/no questions?,"Invert the auxiliary and the subject. Example: You are happy → Are you happy? In present simple without 'be', use do/does: Do you like coffee?","Here's how to make yes/no questions in English:
+
+**Basic Structure:**
+
+* **Auxiliary Verb + Subject + Main Verb (base form) + ?**
+
+   * **Examples:**
+      * Do you like pizza?
+      * Can she sing?
+      * Will he come tomorrow?
+
+**Common Auxiliary Verbs:**
+
+* **Do/Does:** Used for questions in the present simple tense. 
+    * I do like chocolate. (Statement)
+    * Do you like chocolate? (Question)
+* **Did:** Used for questions in the past simple tense.
+    * She did eat pizza last night. (Statement)
+    * Did she eat pizza last night? (Question)
+* **Will/Shall:** Used for questions about future actions.
+    * He will go to the party. (Statement)
+    * Will he go to the party? (Question)
+
+**Important Notes:**
+
+* **Word Order:** In yes/no questions, the auxiliary verb comes *before* the subject. This is different from statements where the subject usually comes before the verb.
+* **Contractions:**  You can often use contractions with auxiliary verbs:
+    * Do you = Do'ya
+    * Does he = Does'e
+    * Did she = Did'she
+* **Tone of Voice:** A rising intonation at the end of a yes/no question signals that you are asking for information.
+
+**Let me know if you'd like more examples or want to practice making yes/no questions!**",,7.423,0.5,auxiliary,invert,
+gemma2:9b,baseline,G23,GRAMMAR,es,A2,plurals,¿Cuál es el plural de 'child' y de 'foot'?,'Child' → 'children' (plural irregular). 'Foot' → 'feet' (plural irregular).,"El plural de **child** es **children**.
+
+El plural de **foot** puede ser **feet** o ** foots**. 
+
+
+* **Feet** se usa generalmente para referirse a los pies humanos.
+* **Foots** es menos común, pero se usa en algunos casos específicos, como en la expresión ""a pair of foots"" (un par de pies).",,3.365,1.0,"children, feet",,
+gemma2:9b,baseline,G24,GRAMMAR,mixed,A2,countable_uncountable,¿Uso 'much' o 'many' con 'water'?,"'Water' es uncountable (no contable), así que se usa 'much': How much water do you drink? 'Many' se usa con contables: How many bottles of water?","Usas **much** con ""water"". 
+
+Aquí está la regla general:
+
+* **Much** se usa con sustantivos no contables (sustantivos que no se pueden contar individualmente). El agua es un sustantivo no contable.
+* **Many** se usa con sustantivos contables (sustantivos que puedes contar individualmente).
+
+
+Ejemplos:
+
+* There is **much water** in the ocean. 
+* We don't have **many bottles of water**. 
+
+
+
+Espero que esto ayude!",,4.026,0.6666666666666666,"much, many",countable,
+gemma2:9b,baseline,G25,GRAMMAR,es,A2,adverbs_frequency,¿Dónde pongo 'always' en una oración?,"Los adverbios de frecuencia (always, usually, often, sometimes, never) van antes del verbo principal pero después de 'be'. Ejemplo: I always study at night. / She is always happy.","""Always"" se usa como un adverbio, generalmente al **principio** de la oración para enfatizar que algo sucede todo el tiempo. 
+
+Aquí tienes algunos ejemplos:
+
+* **Always** wear a helmet when riding your bike. (Siempre usa un casco cuando montas en bicicleta.)
+* I **always** brush my teeth before bed. (Siempre me cepillo los dientes antes de dormir.)
+* She **always** arrives on time. (Ella siempre llega a tiempo.)
+
+
+También puedes usar ""always"" después del verbo auxiliar ""do"" o ""does"" para enfatizar una acción habitual:
+
+* Do you **always** eat breakfast? (¿Siempre desayunas?)
+* Does he **always** wear that hat? (¿Siempre lleva ese sombrero?)
+
+
+
+Espero que esto te ayude! 
+",,4.812,1.0,"always, before",,

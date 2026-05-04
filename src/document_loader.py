@@ -37,6 +37,15 @@ from src.prompts import CONTEXTUAL_CHUNK_PROMPT
 
 logger = logging.getLogger(__name__)
 
+EXCLUDED_DIRS = {"quarantine"}
+ALLOWED_ROOT_FILES = {"syllabus.xlsx"}
+
+# Filtro de calidad para fuentes con OCR ruidoso
+MIN_USEFUL_CHARS_PER_PAGE = 100      # páginas con menos texto se descartan
+MAX_NOISE_RATIO = 0.30                # más de 30% caracteres no alfabéticos = página ruido
+QUALITY_FILTERED_SOURCES = {"student_book"}  # source_types donde aplicar el filtro
+
+
 # ==========================================
 # Helpers
 # ==========================================
@@ -74,6 +83,53 @@ def _infer_unit_metadata(file_path: str) -> dict:
     if "fundamental" in name:
         meta["program"] = "fundamental_plus"
     return meta
+
+
+def _is_excluded(path: Path) -> bool:
+    """True si el path está dentro de una subcarpeta excluida."""
+    rel = path.relative_to(RAW_DATA_DIR)
+    return any(part in EXCLUDED_DIRS for part in rel.parts)
+
+
+def _infer_source_type(file_path: Path) -> str:
+    """Devuelve el nombre de la subcarpeta dentro de data/raw/ como source_type."""
+    rel = file_path.relative_to(RAW_DATA_DIR)
+    if len(rel.parts) < 2:
+        raise ValueError(f"Archivo {file_path.name} en raíz no debería indexarse")
+    return rel.parts[0]
+
+
+def _is_low_quality_text(text: str) -> tuple[bool, str]:
+    """
+    Evalúa si un texto tiene calidad suficiente para indexar.
+    Devuelve (es_baja_calidad, razón).
+    """
+    text = text.strip()
+    n_chars = len(text)
+    if n_chars < MIN_USEFUL_CHARS_PER_PAGE:
+        return True, f"too_short({n_chars}c)"
+
+    # Ratio de caracteres alfabéticos vs total
+    n_alpha = sum(1 for c in text if c.isalpha() or c.isspace())
+    alpha_ratio = n_alpha / max(n_chars, 1)
+    if alpha_ratio < (1 - MAX_NOISE_RATIO):
+        return True, f"too_noisy(alpha_ratio={alpha_ratio:.2f})"
+
+    return False, ""
+
+
+def _validate_no_orphan_files_in_root() -> None:
+    """Falla si hay archivos en data/raw/ raíz que no estén en ALLOWED_ROOT_FILES."""
+    orphans = []
+    for item in RAW_DATA_DIR.iterdir():
+        if item.is_file() and item.name not in ALLOWED_ROOT_FILES:
+            orphans.append(item.name)
+    if orphans:
+        raise ValueError(
+            f"Archivos no clasificados en data/raw/: {orphans}. "
+            f"Movelos a una subcarpeta (book_te/, supplementary/, vocabulary/, "
+            f"student_book/) o agregalos a ALLOWED_ROOT_FILES si son metadata estructural."
+        )
 
 
 # ==========================================
@@ -120,31 +176,49 @@ def process_excel_by_rows(file_path) -> List[Document]:
 # Text files (PDF/TXT/MD) → parent + child
 # ==========================================
 def _load_text_documents() -> List[Document]:
-    """Carga PDF/TXT desde RAW_DATA_DIR; para .md parsea frontmatter YAML."""
+    """Carga PDF/TXT desde RAW_DATA_DIR recursivamente; excluye EXCLUDED_DIRS."""
     extensions = {
-        "*.pdf": PyPDFLoader,
-        "*.txt": TextLoader,
+        "**/*.pdf": PyPDFLoader,
+        "**/*.txt": TextLoader,
     }
     docs = []
     for glob_pattern, loader_cls in extensions.items():
         loader = DirectoryLoader(
-            str(RAW_DATA_DIR), glob=glob_pattern, loader_cls=loader_cls
+            str(RAW_DATA_DIR), glob=glob_pattern, loader_cls=loader_cls,
+            recursive=True,
         )
         try:
             loaded = loader.load()
         except Exception as e:
             logger.warning(f"Error cargando {glob_pattern}: {e}")
             loaded = []
+        filtered_count = 0
         for d in loaded:
-            src = d.metadata.get("source", "")
-            d.metadata.update(_infer_unit_metadata(src))
-            d.metadata["source_type"] = "book"
-        docs.extend(loaded)
+            src = Path(d.metadata.get("source", ""))
+            if _is_excluded(src):
+                continue
+            d.metadata.update(_infer_unit_metadata(str(src)))
+            source_type = _infer_source_type(src)
+            d.metadata["source_type"] = source_type
 
-    for md_file in sorted(RAW_DATA_DIR.glob("*.md")):
+            # Filtro de calidad para fuentes con OCR ruidoso
+            if source_type in QUALITY_FILTERED_SOURCES:
+                is_bad, reason = _is_low_quality_text(d.page_content)
+                if is_bad:
+                    filtered_count += 1
+                    logger.debug(f"Filtrada página de {src.name} (page={d.metadata.get('page', '?')}): {reason}")
+                    continue
+            docs.append(d)
+
+        if filtered_count:
+            logger.info(f"Filtro de calidad: {filtered_count} páginas descartadas por baja calidad/ruido OCR.")
+
+    for md_file in sorted(RAW_DATA_DIR.rglob("*.md")):
+        if _is_excluded(md_file):
+            continue
         try:
             text = md_file.read_text(encoding="utf-8")
-            metadata = {"source": str(md_file), "source_type": "book"}
+            metadata = {"source": str(md_file), "source_type": _infer_source_type(md_file)}
             if text.startswith("---"):
                 end_idx = text.find("\n---", 3)
                 if end_idx != -1:
@@ -164,6 +238,12 @@ def _load_text_documents() -> List[Document]:
             else:
                 body = text
                 metadata.update(_infer_unit_metadata(str(md_file)))
+            source_type = _infer_source_type(md_file)
+            if source_type in QUALITY_FILTERED_SOURCES:
+                is_bad, reason = _is_low_quality_text(body)
+                if is_bad:
+                    logger.debug(f"Filtrado .md de baja calidad {md_file.name}: {reason}")
+                    continue
             docs.append(Document(page_content=body, metadata=metadata))
         except Exception as e:
             logger.warning(f"Error cargando {md_file.name}: {e}")
@@ -312,12 +392,15 @@ def contextualize_chunks(
 def load_and_split_documents() -> List[Document]:
     """
     Pipeline completo de indexación:
-    1. Carga PDFs/TXT/MD → splits parent + child con metadata estructural.
-    2. Carga XLSX → 1 fila = 1 Document con metadatos.
-    3. Aplica contextual retrieval a los children.
-    4. Persiste parents para ParentDocumentRetriever.
+    1. Valida que no haya archivos huérfanos en data/raw/ raíz.
+    2. Carga PDFs/TXT/MD recursivamente → splits parent + child con metadata estructural.
+    3. Carga XLSX (excluye ALLOWED_ROOT_FILES y quarantine) → 1 fila = 1 Document.
+    4. Aplica contextual retrieval a los children.
+    5. Persiste parents para ParentDocumentRetriever.
     Devuelve sólo los CHILDREN (que son los que se embedean).
     """
+    _validate_no_orphan_files_in_root()
+
     final_children: List[Document] = []
     all_parents: List[Document] = []
 
@@ -328,9 +411,12 @@ def load_and_split_documents() -> List[Document]:
         all_parents.extend(parents)
         final_children.extend(children)
 
-    # 2) Excel syllabus (el chunk = fila; actúa como su propio parent)
-    excel_files = list(RAW_DATA_DIR.glob("*.xlsx"))
+    # 2) Excel (excluye syllabus de raíz y subcarpetas excluidas)
+    excel_files = list(RAW_DATA_DIR.rglob("*.xlsx"))
     for file in excel_files:
+        if _is_excluded(file) or file.name in ALLOWED_ROOT_FILES:
+            logger.info(f"Skipping {file.name} (metadata estructural, no se indexa)")
+            continue
         excel_docs = process_excel_by_rows(file)
         for d in excel_docs:
             pid = _hash_text(d.page_content)

@@ -1,0 +1,64 @@
+llm_model,mode,id,category,language,level,topic,question,ground_truth,answer,guardrail,latency_s,mention_rate,mentions_hit,mentions_missed,violations
+qwen2.5:7b,rag,V01,VOCABULARY,es,A2,vocabulary_family,¿Cómo se dice 'cuñado' en inglés?,"Se dice 'brother-in-law'. Si es la esposa del hermano, es 'sister-in-law'.","En inglés, ""cuñado"" se traduce como ""brother-in-law"". Este término se usa para referirse a un hombre que es hermano de la esposa o marido de la hermana de una persona.
+
+Ejemplos:
+1. *Is your brother-in-law coming to the party?* — ¿Tu cuñado va a venir a la fiesta?
+2. *My brother-in-law is a great cook.* — Mi cuñado es un gran cocinero.
+
+Ahora, practica tú: ¿Cómo dirías ""Mi hermana tiene un marido muy amable"" en inglés?
+
+📚 Fuentes:
+- SYM_2_WordList.xlsx (Unidad 1, Nivel A2)",,18.386,1.0,brother-in-law,,
+qwen2.5:7b,rag,V02,VOCABULARY,es,A2,vocabulary_food,¿Cuál es la diferencia entre 'supper' y 'dinner'?,"'Dinner' es la comida principal del día (suele ser la cena). 'Supper' es una cena más ligera, a veces usada como sinónimo de dinner en contextos familiares.","La diferencia entre ""supper"" y ""dinner"" no está explícitamente explicada en los fragmentos proporcionados, pero podemos inferir algunas diferencias basándonos en el contexto general.
+
+**Respuesta:**
+En inglés, ""dinner"" es un término más general que se refiere a la comida principal del día, que suelen tomar en la tarde o noche. Por otro lado, ""supper"" suele ser una comida ligera tomada al final de la jornada, especialmente en países como el Reino Unido.
+
+Ejemplos:
+- *We had dinner at 7 PM.* — Tuvimos cena a las 7 PM.
+- *Supper is usually lighter than dinner.* — El supper es generalmente más ligero que la cena.
+
+Ahora, ¿puedes decirme en qué momento del día normalmente tomas ""dinner"" y ""supper""? 
+
+📚 Fuentes:
+- English Grammar in Use.pdf (Unidades 74–76)",,14.57,1.0,"dinner, supper",,
+qwen2.5:7b,rag,V03,VOCABULARY,mixed,A2,false_friends,¿'Assist' significa asistir a una reunión?,"No. 'Assist' significa ayudar, no asistir. Para decir 'asistir a una reunión' se usa 'attend a meeting'. Es un falso amigo común.","No encontré información suficiente sobre **""¿'Assist' significa asistir a una reunión?""** en tus materiales de clase del ciclo Fundamental Plus.
+
+Te recomiendo:
+- Revisar el índice de tu libro por el tema relacionado.
+- Consultar con tu profesor en la próxima clase.
+- Reformular tu pregunta siendo más específico(a) (por ejemplo, mencionando la unidad o tema).
+
+¿Puedes darme más detalles sobre lo que necesitas aprender?",low_confidence,8.653,0.0,,"attend, help",asistir
+qwen2.5:7b,rag,V04,VOCABULARY,en,B1,phrasal_verbs,What does 'give up' mean?,'Give up' means to stop trying or to quit. Example: She gave up smoking last year.,"""Give up"" en inglés se refiere a dejar de intentar algo o a parar de hacer algo que estás haciendo. Es similar al español ""dejar"" o ""renunciar"". 
+
+Ejemplos:
+- *Don't give up your dream.* — No abandones tu sueño.
+- *He decided to give up smoking.* — Él decidió dejar de fumar.
+
+Pregunta de seguimiento: ¿Podrías usar ""give up"" en una oración contándome por qué decidiste dejar algo?
+
+📚 Fuentes:
+- English Grammar in Use.pdf (Unidad 143, Nivel A2)",,13.313,0.0,,"quit, stop",
+qwen2.5:7b,rag,V05,VOCABULARY,es,A2,vocabulary_weather,¿Cómo describo el clima en inglés?,"Se usa 'It is' + adjetivo: It is sunny, It is cloudy, It is raining, It is cold, It is hot. Para temperatura: It is 25 degrees.","Para describir el clima en inglés, puedes usar una variedad de palabras y frases. Aquí te presento algunos ejemplos:
+
+1. **Descripciones generales:**
+   - *It's sunny today.* — Hoy hace sol.
+   - *The weather is rainy.* — El tiempo está lluvioso.
+
+2. **Descripciones más detalladas:**
+   - *It's cold and windy outside.* — Fuera hace frío y sopla mucho viento.
+   - *There's a lot of fog in the morning.* — Hay mucha niebla por la mañana.
+
+3. **Usando adjetivos para describir el clima:**
+   - *The weather is warm and pleasant.* — El tiempo está cálido y agradable.
+   - *It's humid and sticky outside.* — Fuera hace húmedo y pegajoso.
+
+4. **Frases de conversación común:**
+   - *What’s the weather like today?* — ¿Cómo es el clima hoy?
+   - *I think it might rain later.* — Creo que puede llover más tarde.
+
+Ahora, practica tú: ¿cómo describirías un día soleado y cálido en inglés?
+
+📚 Fuentes:
+- English Grammar in Use.pdf (Unidad 87)",,14.156,0.6666666666666666,"sunny, rain",cloudy,

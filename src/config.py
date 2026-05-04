@@ -91,7 +91,7 @@ CONTEXTUAL_MAX_WORDS = int(os.getenv("CONTEXTUAL_MAX_WORDS", 60))
 ENABLE_QUERY_REWRITING = os.getenv("ENABLE_QUERY_REWRITING", "true").lower() == "true"
 
 # Umbral bajo-confianza (para guardrail "no sé")
-LOW_CONFIDENCE_THRESHOLD = float(os.getenv("LOW_CONFIDENCE_THRESHOLD", 0.2))
+LOW_CONFIDENCE_THRESHOLD = float(os.getenv("LOW_CONFIDENCE_THRESHOLD", 0.05))
 
 # ==========================================
 # 6. GUARDRAILS

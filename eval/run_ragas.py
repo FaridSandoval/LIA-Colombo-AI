@@ -1,25 +1,29 @@
-"""
+﻿"""
 Benchmark del pipeline LIA con RAGAS.
 
 Uso:
     python -m eval.run_ragas --llm gemma2:9b
-    python -m eval.run_ragas --all   # corre los 3 candidatos secuencialmente
+    python -m eval.run_ragas --all          # corre todos los candidatos secuencialmente
+    python -m eval.run_ragas --baseline     # LLM directo sin RAG
+    python -m eval.run_ragas --smoke-test   # solo 5 items para validar el pipeline
+    python -m eval.run_ragas --skip-ragas   # omite mÃ©tricas RAGAS (no requiere OPENAI_API_KEY)
 
-Métricas RAGAS:
-    - faithfulness: ¿la respuesta está soportada por el contexto?
-    - answer_relevancy: ¿la respuesta contesta la pregunta?
-    - context_precision: ¿los chunks recuperados son relevantes?
-    - context_recall: ¿recuperaste todos los chunks necesarios?
+MÃ©tricas RAGAS (juez: GPT-4o via OPENAI_API_KEY):
+    - faithfulness: Â¿la respuesta estÃ¡ soportada por el contexto?
+    - answer_relevancy: Â¿la respuesta contesta la pregunta?
+    - context_precision: Â¿los chunks recuperados son relevantes?
+    - context_recall: Â¿recuperaste todos los chunks necesarios?
 
 Extras propias:
     - keyword coverage (must_mention / must_not_mention)
     - latencia p50/p95
-    - tasa de activación de guardrails
+    - tasa de activaciÃ³n de guardrails
 """
 from __future__ import annotations
 import argparse
 import csv
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -34,14 +38,62 @@ from src.config import (
     EVAL_RESULTS_DIR,
     OLLAMA_BASE_URL,
 )
-from src.embeddings import create_or_load_vectorstore, get_embedding_model
-from src.llm_chain import get_pipeline
+from src.embeddings import create_or_load_vectorstore
+from src.llm_chain import get_pipeline, RAGResponse
+
+
+class BaselinePipeline:
+    """Pipeline de lÃ­nea base: llama directo al LLM sin RAG ni retrieval."""
+
+    def __init__(self, llm_model: str):
+        self.llm_model = llm_model
+
+    def query(self, user_query: str, user_info=None, conversation_history=None):
+        from langchain_ollama import ChatOllama
+        llm = ChatOllama(model=self.llm_model, base_url=OLLAMA_BASE_URL, temperature=0.2)
+        response = llm.invoke([{"role": "user", "content": user_query}])
+        return RAGResponse(
+            answer=response.content,
+            citations=[],
+            retrieved_chunks=[],
+            guardrail_triggered=None,
+            llm_model=self.llm_model,
+            trace_id=None,
+        )
+
+
+# Mock de usuario para el pipeline RAG (contexto de perfil requerido por los prompts)
+_MOCK_USER_INFO = {
+    "Student Name": "Estudiante de Prueba",
+    "Course": "Fundamental Plus",
+    "Status": "Activo",
+    "Final Score": "70",
+    "Teacher Feedback": "(sin feedback previo)",
+}
 
 
 def load_golden_set(path: Path | None = None) -> list[dict]:
     path = path or (EVAL_DIR / "golden_set.yaml")
     data = yaml.safe_load(path.read_text(encoding="utf-8"))
     return data.get("items", [])
+
+
+def filter_smoke_test(golden: list[dict]) -> list[dict]:
+    """Selecciona 5 items: 2 GRAMMAR, 2 VOCABULARY, 1 GUARDRAIL_*."""
+    grammar = [i for i in golden if i.get("category", "").upper() == "GRAMMAR"]
+    vocabulary = [i for i in golden if i.get("category", "").upper() == "VOCABULARY"]
+    guardrail = [i for i in golden if i.get("category", "").upper().startswith("GUARDRAIL_")]
+
+    selected = grammar[:2] + vocabulary[:2] + guardrail[:1]
+
+    # Fallback: completar hasta 5 con los primeros items no incluidos
+    if len(selected) < 5:
+        seen_ids = {i["id"] for i in selected}
+        for item in golden:
+            if item["id"] not in seen_ids and len(selected) < 5:
+                selected.append(item)
+
+    return selected[:5]
 
 
 def keyword_coverage(answer: str, must_mention: list[str], must_not_mention: list[str]) -> dict:
@@ -66,13 +118,23 @@ def percentile(values: list[float], p: float) -> float:
     return s[k]
 
 
-def run_pipeline_on_golden_set(pipeline, golden: list[dict]) -> list[dict]:
+def run_pipeline_on_golden_set(
+    pipeline, golden: list[dict], baseline: bool = False
+) -> list[dict]:
     """Ejecuta el pipeline sobre cada item y colecciona resultados brutos."""
     rows = []
     for item in golden:
         t0 = time.perf_counter()
         try:
-            resp = pipeline.query(user_query=item["question"])
+            if baseline:
+                # Modo baseline: sin user_info ni historial
+                resp = pipeline.query(user_query=item["question"])
+            else:
+                resp = pipeline.query(
+                    user_query=item["question"],
+                    user_info=_MOCK_USER_INFO,
+                    conversation_history=[],
+                )
             answer = resp.answer
             contexts = [c.get("snippet", "") for c in resp.citations]
             guardrail = resp.guardrail_triggered or ""
@@ -108,19 +170,22 @@ def run_pipeline_on_golden_set(pipeline, golden: list[dict]) -> list[dict]:
 
 def compute_ragas_metrics(rows: list[dict]):
     """
-    Intenta calcular métricas de RAGAS. Si RAGAS no está instalado o falla,
-    devuelve None y seguimos con las métricas propias.
+    Calcula métricas RAGAS usando GPT-4o-mini como juez y text-embedding-3-small.
+    Devuelve None si falla o si no hay items válidos.
     """
     try:
         from datasets import Dataset
         from ragas import evaluate
+        from ragas.run_config import RunConfig
         from ragas.metrics import (
-            faithfulness, answer_relevancy,
-            context_precision, context_recall,
+            faithfulness,
+            answer_relevancy,
+            context_precision,
+            context_recall,
         )
-        from langchain_ollama import ChatOllama, OllamaEmbeddings
+        from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
-        # Filtramos los que activan guardrail — no aplican las métricas RAGAS estándar
+        # Items con guardrail no aplican para las métricas RAGAS estándar
         ragas_rows = [r for r in rows if not r["guardrail"]]
         if not ragas_rows:
             return None
@@ -132,31 +197,40 @@ def compute_ragas_metrics(rows: list[dict]):
             "ground_truth": r["ground_truth"],
         } for r in ragas_rows])
 
-        # Usar el utility LLM (más rápido) como juez; embeddings: bge-m3 ya configurado
-        from src.config import LLM_UTILITY_MODEL
-        judge_llm = ChatOllama(
-            model=LLM_UTILITY_MODEL, base_url=OLLAMA_BASE_URL, temperature=0.0,
+        judge_llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.0)
+        judge_emb = OpenAIEmbeddings(model="text-embedding-3-small")
+
+        # RunConfig para evitar timeouts y rate limits con OpenAI
+        run_config = RunConfig(
+            max_workers=4,        # default 16 - bajar para evitar rate limits
+            timeout=180,          # default 60s - subir para gpt-4o lento
+            max_retries=5,        # reintentos antes de dar NaN
         )
-        judge_emb = get_embedding_model()
 
         result = evaluate(
             ds,
             metrics=[faithfulness, answer_relevancy, context_precision, context_recall],
             llm=judge_llm,
             embeddings=judge_emb,
+            run_config=run_config,
         )
         return result
     except ImportError as e:
-        print(f"  ⚠ RAGAS no disponible ({e}). Saltando métricas RAGAS.")
+        print(f"  [WARN] RAGAS no disponible ({e}). Saltando métricas RAGAS.")
         return None
     except Exception as e:
-        print(f"  ⚠ Error calculando RAGAS: {e}")
+        import traceback
+        print(f"  [WARN] Error calculando RAGAS: {type(e).__name__}: {e}")
+        print(f"  [TRACEBACK]:")
+        traceback.print_exc()
         return None
 
 
-def write_detailed_csv(rows: list[dict], out_path: Path, llm_model: str) -> None:
+def write_detailed_csv(
+    rows: list[dict], out_path: Path, llm_model: str, mode: str = "rag"
+) -> None:
     fieldnames = [
-        "llm_model", "id", "category", "language", "level", "topic",
+        "llm_model", "mode", "id", "category", "language", "level", "topic",
         "question", "ground_truth", "answer",
         "guardrail", "latency_s", "mention_rate",
         "mentions_hit", "mentions_missed", "violations",
@@ -167,6 +241,7 @@ def write_detailed_csv(rows: list[dict], out_path: Path, llm_model: str) -> None
         for r in rows:
             writer.writerow({
                 "llm_model": llm_model,
+                "mode": mode,
                 "id": r["id"],
                 "category": r["category"],
                 "language": r["language"],
@@ -184,7 +259,9 @@ def write_detailed_csv(rows: list[dict], out_path: Path, llm_model: str) -> None
             })
 
 
-def summarize(rows: list[dict], llm_model: str, ragas_result) -> dict:
+def summarize(
+    rows: list[dict], llm_model: str, ragas_result, mode: str = "rag"
+) -> dict:
     latencies = [r["latency_s"] for r in rows]
     mention_rates = [r["mention_rate"] for r in rows]
     guardrail_counts = {}
@@ -195,6 +272,7 @@ def summarize(rows: list[dict], llm_model: str, ragas_result) -> dict:
 
     summary = {
         "llm_model": llm_model,
+        "mode": mode,
         "n_items": len(rows),
         "mean_mention_rate": round(sum(mention_rates) / max(len(mention_rates), 1), 4),
         "guardrail_activations": guardrail_counts,
@@ -205,10 +283,8 @@ def summarize(rows: list[dict], llm_model: str, ragas_result) -> dict:
     }
     if ragas_result is not None:
         try:
-            # RAGAS result objeto → dict por métrica
             scores = ragas_result.scores if hasattr(ragas_result, "scores") else ragas_result
             if isinstance(scores, list) and scores:
-                # promedio por métrica
                 keys = scores[0].keys()
                 for k in keys:
                     summary[f"ragas_{k}"] = round(
@@ -227,7 +303,6 @@ def summarize(rows: list[dict], llm_model: str, ragas_result) -> dict:
 
 def append_benchmark_row(summary: dict, bench_csv: Path) -> None:
     exists = bench_csv.exists()
-    # Unir todas las keys vistas en ejecuciones previas
     existing_fields: list[str] = []
     if exists:
         with bench_csv.open("r", encoding="utf-8") as f:
@@ -235,12 +310,10 @@ def append_benchmark_row(summary: dict, bench_csv: Path) -> None:
             existing_fields = reader.fieldnames or []
     fieldnames = list(dict.fromkeys(existing_fields + list(summary.keys())))
 
-    # Re-escribir con el superset de columnas
     rows_to_write: list[dict] = []
     if exists:
         with bench_csv.open("r", encoding="utf-8") as f:
             rows_to_write = list(csv.DictReader(f))
-    # Flatten guardrail_activations para CSV
     flat = dict(summary)
     flat["guardrail_activations"] = json.dumps(summary.get("guardrail_activations", {}))
     rows_to_write.append(flat)
@@ -254,26 +327,40 @@ def append_benchmark_row(summary: dict, bench_csv: Path) -> None:
             writer.writerow(r)
 
 
-def run_for_model(llm_model: str, golden: list[dict]) -> dict:
-    print(f"\n=== Benchmarking {llm_model} ===")
-    vs = create_or_load_vectorstore()
-    pipeline = get_pipeline(vs, llm_model=llm_model)
+def run_for_model(
+    llm_model: str,
+    golden: list[dict],
+    baseline: bool = False,
+    skip_ragas: bool = False,
+) -> dict:
+    mode = "baseline" if baseline else "rag"
+    print(f"\n=== Benchmarking {llm_model} [{mode}] ===")
 
-    rows = run_pipeline_on_golden_set(pipeline, golden)
+    if baseline:
+        pipeline = BaselinePipeline(llm_model)
+    else:
+        vs = create_or_load_vectorstore()
+        pipeline = get_pipeline(vs, llm_model=llm_model)
 
-    detail_csv = EVAL_RESULTS_DIR / f"detail_{llm_model.replace('/', '_').replace(':', '_')}.csv"
-    write_detailed_csv(rows, detail_csv, llm_model)
+    rows = run_pipeline_on_golden_set(pipeline, golden, baseline=baseline)
+
+    model_slug = llm_model.replace("/", "_").replace(":", "_")
+    suffix = "_baseline" if baseline else ""
+    detail_csv = EVAL_RESULTS_DIR / f"detail_{model_slug}{suffix}.csv"
+    write_detailed_csv(rows, detail_csv, llm_model, mode=mode)
     print(f"  Detalle escrito en {detail_csv}")
 
-    print("  Calculando RAGAS...")
-    ragas_result = compute_ragas_metrics(rows)
+    ragas_result = None
+    if not skip_ragas:
+        print("  Calculando RAGAS...")
+        ragas_result = compute_ragas_metrics(rows)
 
-    summary = summarize(rows, llm_model, ragas_result)
+    summary = summarize(rows, llm_model, ragas_result, mode=mode)
     print(f"  Resumen: {json.dumps(summary, ensure_ascii=False, indent=2)}")
 
     bench_csv = EVAL_RESULTS_DIR / "llm_benchmark.csv"
     append_benchmark_row(summary, bench_csv)
-    print(f"  Fila añadida a {bench_csv}")
+    print(f"  Fila aÃ±adida a {bench_csv}")
     return summary
 
 
@@ -281,20 +368,50 @@ def main():
     parser = argparse.ArgumentParser(description="Benchmark RAGAS para LIA-Colombo AI")
     parser.add_argument("--llm", default=LLM_MODEL_NAME, help="Modelo Ollama a evaluar")
     parser.add_argument("--all", action="store_true",
-                        help="Correr los 3 candidatos del benchmark")
+                        help="Correr todos los candidatos de LLM_BENCHMARK_CANDIDATES")
+    parser.add_argument("--baseline", action="store_true",
+                        help="Modo baseline: LLM directo sin RAG")
+    parser.add_argument("--smoke-test", action="store_true", dest="smoke_test",
+                        help="Correr solo 5 items para validar el pipeline rÃ¡pidamente")
+    parser.add_argument("--skip-ragas", action="store_true", dest="skip_ragas",
+                        help="Omitir cÃ¡lculo de mÃ©tricas RAGAS (no requiere OPENAI_API_KEY)")
     parser.add_argument("--golden", default=None,
                         help="Ruta a golden_set.yaml (default: eval/golden_set.yaml)")
+    parser.add_argument("--include-category", action="append", dest="include_categories",
+                        metavar="CATEGORY",
+                        help="Solo correr items de esta categoría (puede repetirse)")
     args = parser.parse_args()
+
+    # Validar API key antes de empezar si se van a calcular métricas RAGAS
+    if not args.skip_ragas:
+        if not os.getenv("OPENAI_API_KEY"):
+            print(
+                "ERROR: OPENAI_API_KEY no está configurada en el entorno.\n"
+                "Agrégala al archivo .env o usa --skip-ragas para omitir las métricas RAGAS."
+            )
+            sys.exit(1)
 
     golden = load_golden_set(Path(args.golden) if args.golden else None)
     print(f"Golden set: {len(golden)} items")
 
+    if args.include_categories:
+        categories = {c.upper() for c in args.include_categories}
+        before = len(golden)
+        golden = [i for i in golden if i.get("category", "").upper() in categories]
+        print(f"[--include-category] Filtro: {before} -> {len(golden)} items (categorías: {categories})")
+
+    if args.smoke_test:
+        golden = filter_smoke_test(golden)
+        print(f"[SMOKE TEST] Corriendo solo {len(golden)} items para validar el pipeline.")
+
     if args.all:
         for m in LLM_BENCHMARK_CANDIDATES:
-            run_for_model(m, golden)
+            run_for_model(m, golden, baseline=args.baseline, skip_ragas=args.skip_ragas)
     else:
-        run_for_model(args.llm, golden)
+        run_for_model(args.llm, golden, baseline=args.baseline, skip_ragas=args.skip_ragas)
 
 
 if __name__ == "__main__":
     sys.exit(main())
+
+

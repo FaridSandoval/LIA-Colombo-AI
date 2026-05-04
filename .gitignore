@@ -1,30 +1,81 @@
-# --- Seguridad (Habeas Data y Privacidad) ---
+﻿# ==============================================================
+# .gitignore LIA-Colombo AI
+# ==============================================================
+
+# --- Secretos (NUNCA al repo) ---
 .env
-*.xlsx
-*.csv
-personal_data.xlsx
+.env.*
+!.env.example
+keys.txt
+*.key
+secrets/
+credentials.json
 
-# --- Archivos Pesados (El libro PDF que causó el error) ---
-books/
-*.pdf
-
-# --- Archivos generados por Python ---
-__pycache__/
-*.py[cod]
-faiss_index_lia/
-
-# --- Binarios externos ---
-src/bin/
-
-# --- Índices regenerables ---
+# --- Archivos pesados (regenerables, no van al repo) ---
 data/chroma_db/
+data/parent_docs/
+data/contextual_cache/
 data/parents.jsonl
 data/context_cache.json
 data/_backup_*/
-data/parent_docs/
-data/contextual_cache/
+backups/
+faiss_index_lia/
+*.opus
+*.mp3
+*.wav
 
-# --- Otros ---
+# --- PII (Habeas Data) ---
+data/sessions/
+sessions.db
+personal_data.xlsx
+
+# --- Binarios externos ---
+src/bin/
+*.bin
+
+# --- PDFs del corpus (pesan mucho, gestionados aparte) ---
+*.pdf
+
+# --- Excel: ignora todos por default, excepciones abajo ---
+*.xlsx
+!data/raw/syllabus.xlsx
+!data/raw/vocabulary/SYM_2_WordList.xlsx
+
+# --- CSV: ignora datos de usuario, permite resultados de benchmark ---
+*.csv
+!eval/results/*.csv
+!eval/golden_set*.csv
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- Entornos virtuales ---
+.venv/
+venv/
+env/
+
+# --- Editores ---
+.vscode/
+.idea/
+*.swp
+
+# --- OS ---
 .DS_Store
-# Claude Code local config
+Thumbs.db
+
+# --- Claude Code config local ---
 .claude/
+
+# --- Archivos temporales del proyecto ---
+help_output.txt
+*.backup
+
+# Cuarentena (solo local)
+data/quarantine/
+data/raw/quarantine/

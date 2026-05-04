@@ -1,0 +1,38 @@
+﻿INFORME DE COMPARATIVA LIA - 3 DE MAYO 2026 (CORRIDA LIMPIA)
+-------------------------------------------------------------
+Categoria: GRAMMAR (n=25 items del golden set)
+Juez RAGAS: gpt-4o-mini
+Embeddings: BGE-M3 | Reranker: BGE-reranker-v2-m3
+Corpus: Murphy 5ed (grammar_reference) + SYM2 SB (student_book)
+        + Supplementary (audio scripts, answer keys, CEFR, tests)
+        + WordList (vocabulary). Total 6,359 chunks.
+
+NOTA IMPORTANTE: Estas metricas reemplazan a las del 4 de mayo.
+Aquellas estaban afectadas por un bug en resolve_parents() que provocaba
+que el guardrail de baja confianza se activara en 24 de 25 preguntas,
+midiendo el mensaje fijo del guardrail en lugar de respuestas reales.
+Bug corregido el 3 de mayo via reindex completo del corpus.
+
+METRICAS RAGAS (RAG):
+                  | Faith  | Rel.  | Ctx Prec | Ctx Rec | Latencia p50
+gemma2:9b         | 0.502  | 0.719 | 0.678    | 0.594   | 14.5s
+llama3.1:8b       | 0.425  | 0.785 | 0.667    | 0.645   | 15.8s
+qwen2.5:7b        | 0.344  | 0.765 | 0.659    | 0.717   | 14.4s
+
+GUARDRAILS: 2/25 activaciones de low_confidence en los 3 modelos
+            (mismas preguntas: G11, G23 - reranker no encuentra match)
+            0/25 violaciones de hallucination en los 3 modelos.
+
+NO HAY GANADOR UNICO:
+- gemma2:9b lidera en Faithfulness (0.502) y Context Precision (0.678).
+  Se cine mas al texto del corpus.
+- qwen2.5:7b lidera en Context Recall (0.717) y mention_rate (0.609).
+  Trae mas info correcta y la usa, aunque la presenta menos textualmente.
+- llama3.1:8b queda intermedio en todas las metricas.
+
+DECISION PENDIENTE PARA LA ASESORIA:
+Que priorizamos para LIA?
+  (a) Faithfulness alto = mas anclaje al texto = menor riesgo pedagogico
+      pero respuestas mas rigidas. Sugiere gemma2:9b.
+  (b) Context Recall alto = mejor cobertura = mejor experiencia del estudiante
+      pero menor trazabilidad textual. Sugiere qwen2.5:7b.

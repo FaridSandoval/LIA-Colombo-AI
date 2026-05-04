@@ -10,15 +10,18 @@ unit_boundary:
   patterns:
     - "^Unit\\s+(\\d+)\\s*[—\\-:]?\\s*(.+)$"
     - "^UNIT\\s+(\\d+)\\b"
-    - "^(\\d+)\\s+([A-Z][A-Za-z' !?]+)$"
-  min_font_size: 30.0  # los Unit headers reales son ≥54pt
+    - "^(\\d+)\\s+UNIT\\b"
+    - "^Unit\\s+12\\s+I’m\\s+a\\s+Member$" 
+  min_font_size: 25.0 
 
 # ---- Detección de Lessons / secciones internas ----
 lesson_boundary:
   patterns:
     - "^Lesson\\s+(\\d+)([A-Za-z])?\\s*[—\\-:]?\\s*(.*)$"
+    - "^LESSON\\s+(\\d+)\\b"
     - "^(\\d+[A-Za-z])\\s+(.+)$"
-  min_font_size: 10.5  # body text es ~8.6pt
+    - "^[A-D]\\s+.+$" 
+  min_font_size: 9.0  
 
 # ---- Identificación de secciones funcionales dentro de una Lesson ----
 section_keywords:
