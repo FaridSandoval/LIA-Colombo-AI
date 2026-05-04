@@ -50,7 +50,6 @@ Este hallazgo confirma los issues **GS3** y **GS4** documentados en `auditoria_c
 
 **Opción A — Reorientar VOCABULARY al syllabus real**
 Reescribir los 5 ítems usando headwords que efectivamente están en `SYM_2_WordList.xlsx`. Ejemplo: en vez de "¿Cómo se dice 'cuñado' en inglés?", preguntar por términos del Unit 1 (Role Models) o Unit 2 (Party).
-- Esfuerzo: 2 horas (Iván + revisión de Ferro).
 - Costo: ninguno adicional.
 - Trade-off: el golden set queda alineado al corpus, pero pierde valor como prueba de "vocabulario conversacional realista".
 
@@ -65,12 +64,7 @@ Reorientar 3/5 ítems a headwords del syllabus (rápido), y dejar 2/5 como "VOCA
 - Esfuerzo: 2 horas.
 - Trade-off: golden set más pequeño pero más honesto sobre lo que el sistema cubre.
 
-## Recomendación pendiente
-
-Decisión a tomar con Ferro en la asesoría del jueves 7 de mayo. La Opción C es la más defendible académicamente porque (a) alinea el golden set con el alcance declarado del corpus y (b) preserva ítems que evalúan el comportamiento esperado cuando el sistema no sabe.
-
 ## Anexo — datos de respaldo
 
 - CSV detallado: `eval/results/detail_gemma2_9b.csv` (run del 4 mayo 2026)
 - CSV agregado: `eval/results/llm_benchmark.csv` (última fila: n_items=8)
-- Salida de consola completa del run y diagnóstico del vectorstore disponibles en historial de Claude Code.
