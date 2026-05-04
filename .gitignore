@@ -79,3 +79,6 @@ help_output.txt
 # Cuarentena (solo local)
 data/quarantine/
 data/raw/quarantine/
+
+# Notas internas (no van al repo)
+docs/findings/
