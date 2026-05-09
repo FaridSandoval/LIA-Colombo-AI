@@ -61,6 +61,13 @@ def render_citations(citations: list):
             st.caption(c["snippet"])
 
 
+def strip_sources_block(answer: str) -> str:
+    """Elimina el bloque '📚 Fuentes:' que genera el LLM del texto de respuesta."""
+    import re
+    cleaned = re.sub(r'\n*📚\s*Fuentes:.*', '', answer, flags=re.DOTALL | re.IGNORECASE)
+    return cleaned.strip()
+
+
 # ==========================================
 # ESTADO
 # ==========================================
@@ -235,11 +242,11 @@ if prompt := st.chat_input("Escribe tu duda sobre la clase..."):
 
     msg = {
         "role": "assistant",
-        "content": rag_response.answer,
+        "content": strip_sources_block(rag_response.answer),
         "citations": rag_response.citations,
         "llm_model": rag_response.llm_model,
         "guardrail": rag_response.guardrail_triggered,
     }
     st.session_state.messages.append(msg)
-    save_message(student_id, "assistant", rag_response.answer)
+    save_message(student_id, "assistant", strip_sources_block(rag_response.answer))
     st.rerun()

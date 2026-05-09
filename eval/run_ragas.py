@@ -136,7 +136,7 @@ def run_pipeline_on_golden_set(
                     conversation_history=[],
                 )
             answer = resp.answer
-            contexts = [c.get("snippet", "") for c in resp.citations]
+            contexts = [c.get("full_text", c.get("snippet", "")) for c in resp.citations]
             guardrail = resp.guardrail_triggered or ""
         except Exception as e:
             answer = f"<error: {e}>"

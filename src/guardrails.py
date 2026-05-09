@@ -39,22 +39,50 @@ _ESL_KEYWORDS = {
 }
 
 _OFF_DOMAIN_HINTS = {
-    "python", "javascript", "código", "programming", "programar",
-    "receta", "recipe", "cocina", "medicina", "médico", "doctor",
-    "política", "politica", "elecciones", "bitcoin", "crypto",
+    # Programacion / tech
+    "python", "javascript", "código", "codigo", "programming", "programar",
+    "software", "tecnologia", "tecnología",
+    # Cocina / comida
+    "receta", "recipe", "cocina", "cocinar", "cocino", "cocinas",
+    "preparar", "preparo", "ingrediente", "ingredientes",
+    # Salud / medicina
+    "medicina", "médico", "medico", "doctor", "enfermedad",
+    "sintoma", "síntoma", "tratamiento",
+    # Politica / finanzas
+    "política", "politica", "elecciones", "presidente", "gobierno",
+    "bitcoin", "crypto", "criptomoneda", "inversión", "inversion", "bolsa",
+    # Deportes
+    "fútbol", "futbol", "deporte", "deportes", "equipo", "jugador",
+    # Geografia / viajes (no idiomas)
+    "viaje", "turismo", "país", "pais",
+    # Entretenimiento
+    "película", "pelicula", "serie", "música", "musica", "celebridad",
 }
 
 
 def heuristic_domain_check(query: str) -> str:
-    """Clasificación barata por keywords. Devuelve IN_DOMAIN, OFF_DOMAIN o UNKNOWN."""
+    """Clasificacion barata por keywords. Devuelve IN_DOMAIN, OFF_DOMAIN o UNKNOWN.
+
+    Usa word boundaries para evitar falsos positivos por subcadena.
+    Ejemplo: "pasta" NO debe matchear "past".
+    """
     q = query.lower()
 
-    # Match de caracteres del alfabeto inglés embebidos en comillas → muy probable ESL
+    # Match de caracteres del alfabeto ingles embebidos en comillas -> muy probable ESL
     if re.search(r"['\"][a-zA-Z ]+['\"]", query):
         return "IN_DOMAIN"
 
-    off = sum(1 for kw in _OFF_DOMAIN_HINTS if kw in q)
-    esl = sum(1 for kw in _ESL_KEYWORDS if kw in q)
+    def _count_word_matches(text: str, keywords) -> int:
+        n = 0
+        for kw in keywords:
+            # re.escape protege caracteres especiales; word boundaries evitan falsos positivos
+            pattern = r"\b" + re.escape(kw) + r"\b"
+            if re.search(pattern, text):
+                n += 1
+        return n
+
+    off = _count_word_matches(q, _OFF_DOMAIN_HINTS)
+    esl = _count_word_matches(q, _ESL_KEYWORDS)
 
     if off > 0 and esl == 0:
         return "OFF_DOMAIN"

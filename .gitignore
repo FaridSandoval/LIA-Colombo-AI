@@ -82,3 +82,12 @@ data/raw/quarantine/
 
 # Notas internas (no van al repo)
 docs/findings/
+
+# Backups quirúrgicos de sesión
+*.pre_*
+# Notas internas de sesión
+revision_rama_main.md
+docs/hallazgos_*.md
+# Diagnóstico
+eval/te_inspect/
+eval/results/smoke_*.txt

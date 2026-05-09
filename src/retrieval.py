@@ -392,5 +392,6 @@ def extract_citations(ranked: List[Tuple[Document, float]]) -> List[dict]:
             "page": doc.metadata.get("page"),
             "score": round(score, 4),
             "snippet": doc.metadata.get("original_content", doc.page_content)[:300],
+            "full_text": doc.metadata.get("original_content", doc.page_content)[:2000],
         })
     return citations

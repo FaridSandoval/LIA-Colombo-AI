@@ -32,6 +32,7 @@ from src.prompts import (
     TUTOR_SYSTEM_PROMPT,
     CONTEXT_INJECTION_TEMPLATE,
     LOW_CONFIDENCE_RESPONSE_TEMPLATE,
+    DEGRADED_RESPONSE_SYSTEM_PROMPT,
 )
 from src.guardrails import is_in_domain, detect_low_confidence
 from src.retrieval import AdvancedRetriever, format_context_for_prompt, extract_citations
@@ -185,9 +186,24 @@ class LIARAGPipeline:
 
         # --- 3. Guardrail de baja confianza ---
         if not ranked or detect_low_confidence(scores):
+            callbacks = [self.langfuse_handler] if self.langfuse_handler else None
+            try:
+                degraded_msgs = [
+                    {"role": "user", "content": DEGRADED_RESPONSE_SYSTEM_PROMPT.format(query=user_query)}
+                ]
+                resp = self.llm.invoke(
+                    degraded_msgs,
+                    config={"callbacks": callbacks} if callbacks else {},
+                )
+                answer = resp.content
+                guardrail_label = "low_confidence_degraded"
+            except Exception as e:
+                logger.error(f"Error en modo degradado, usando fallback estático: {e}")
+                answer = LOW_CONFIDENCE_RESPONSE_TEMPLATE.format(query=user_query)
+                guardrail_label = "low_confidence"
             return RAGResponse(
-                answer=LOW_CONFIDENCE_RESPONSE_TEMPLATE.format(query=user_query),
-                guardrail_triggered="low_confidence",
+                answer=answer,
+                guardrail_triggered=guardrail_label,
                 retrieved_chunks=extract_citations(ranked),
                 llm_model=self.llm_model,
             )
