@@ -20,22 +20,6 @@ from src.config import LLM_MODEL_NAME, USER_DATA_DIR
 st.set_page_config(page_title="LIA-Colombo AI Tutor", layout="wide", page_icon="🇨🇴")
 
 
-@st.cache_resource
-def _warmup_ollama():
-    """Carga el modelo en VRAM al iniciar la app, antes del primer usuario."""
-    import requests as _req
-    from src.config import OLLAMA_BASE_URL, LLM_MODEL_NAME
-    try:
-        _req.post(
-            f"{OLLAMA_BASE_URL}/api/generate",
-            json={"model": LLM_MODEL_NAME, "prompt": " ", "keep_alive": "30m"},
-            timeout=10,
-        )
-    except Exception:
-        pass
-    return True
-
-_warmup_ollama()
 
 st.markdown("""
 <style>

@@ -17,12 +17,12 @@ import logging
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
-from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI
 
 from src.config import (
     LLM_MODEL_NAME,
     LLM_TEMPERATURE,
-    OLLAMA_BASE_URL,
+    OPENAI_API_KEY,
     ENABLE_LANGFUSE,
     LANGFUSE_HOST,
     LANGFUSE_PUBLIC_KEY,
@@ -113,10 +113,11 @@ class LIARAGPipeline:
         temperature: float = LLM_TEMPERATURE,
     ):
         self.llm_model = llm_model
-        self.llm = ChatOllama(
-            model=llm_model.replace("ollama:", ""),
-            base_url=OLLAMA_BASE_URL,
+        self.llm = ChatOpenAI(
+            model=llm_model,
+            api_key=OPENAI_API_KEY,
             temperature=temperature,
+            streaming=True,
         )
         self.retriever = AdvancedRetriever(vector_store)
         self.langfuse_client, self.langfuse_handler = _get_langfuse()

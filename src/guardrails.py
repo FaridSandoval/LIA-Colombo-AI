@@ -13,7 +13,7 @@ from src.config import (
     ENABLE_DOMAIN_GUARDRAIL,
     ENABLE_LOW_CONFIDENCE_GUARDRAIL,
     LOW_CONFIDENCE_THRESHOLD,
-    OLLAMA_BASE_URL,
+    OPENAI_API_KEY,
     LLM_UTILITY_MODEL,
 )
 from src.prompts import DOMAIN_CHECK_PROMPT
@@ -134,10 +134,10 @@ def is_in_domain(query: str, llm=None) -> bool:
     # Ambiguo → LLM juez
     if llm is None:
         try:
-            from langchain_ollama import ChatOllama
-            llm = ChatOllama(
+            from langchain_openai import ChatOpenAI
+            llm = ChatOpenAI(
                 model=LLM_UTILITY_MODEL,
-                base_url=OLLAMA_BASE_URL,
+                api_key=OPENAI_API_KEY,
                 temperature=0.0,
             )
         except Exception:

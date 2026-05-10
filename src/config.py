@@ -50,23 +50,30 @@ CHUNK_SIZE = CHILD_CHUNK_SIZE
 CHUNK_OVERLAP = CHILD_CHUNK_OVERLAP
 
 # ==========================================
-# 4. INFERENCIA (Ollama & LLM)
+# 4. INFERENCIA (OpenAI)
 # ==========================================
+# Clave API — se lee desde st.secrets en Streamlit Cloud, o desde .env local
+def _get_openai_key() -> str:
+    try:
+        import streamlit as st
+        return st.secrets.get("OPENAI_API_KEY", os.getenv("OPENAI_API_KEY", ""))
+    except Exception:
+        return os.getenv("OPENAI_API_KEY", "")
+
+OPENAI_API_KEY: str = _get_openai_key()
+
+# Deprecated — sólo conservado para compatibilidad con guardrails.py que lo importa
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 
-# Modelo principal — el elegido tras el benchmark de Fase 2
-LLM_MODEL_NAME = os.getenv("LLM_MODEL_NAME", "gemma2:9b")
+# Modelo principal
+LLM_MODEL_NAME = os.getenv("LLM_MODEL_NAME", "gpt-4o-mini")
 LLM_TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", 0.2))
 
-# Candidatos para benchmark RAGAS (Fase 2)
-# Actualizar cuando se hagan pull de modelos adicionales en Ollama
-LLM_BENCHMARK_CANDIDATES = [
-    "gemma2:9b",
-]
+# Candidatos para benchmark RAGAS
+LLM_BENCHMARK_CANDIDATES = ["gpt-4o-mini", "gpt-4o"]
 
-# LLM auxiliar para tareas de routing, contextual retrieval y guardrails
-# Usando gemma2:9b hasta que se instale un modelo más liviano (ej. qwen2.5:3b)
-LLM_UTILITY_MODEL = os.getenv("LLM_UTILITY_MODEL", "gemma2:9b")
+# LLM auxiliar para routing, contextual retrieval y guardrails
+LLM_UTILITY_MODEL = os.getenv("LLM_UTILITY_MODEL", "gpt-4o-mini")
 
 # ==========================================
 # 5. RETRIEVAL AVANZADO
