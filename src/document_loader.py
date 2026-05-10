@@ -312,12 +312,9 @@ def load_parent_store() -> dict:
 # ==========================================
 def _get_utility_llm():
     try:
-        from langchain_ollama import ChatOllama
-        return ChatOllama(
-            model=LLM_UTILITY_MODEL,
-            base_url=OLLAMA_BASE_URL,
-            temperature=0.0,
-        )
+        from langchain_openai import ChatOpenAI
+        from src.config import OPENAI_API_KEY
+        return ChatOpenAI(model=LLM_UTILITY_MODEL, api_key=OPENAI_API_KEY, temperature=0.0)
     except Exception as e:
         logger.warning(f"No se pudo iniciar utility LLM: {e}")
         return None
