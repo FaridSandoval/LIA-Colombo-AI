@@ -91,12 +91,25 @@ def heuristic_domain_check(query: str) -> str:
     return "UNKNOWN"
 
 
+ALWAYS_IN_DOMAIN = [
+    "chat", "talk", "conversation", "practice", "hobby", "hobbies",
+    "free time", "weekend", "family", "tell me", "let's", "lets",
+    "speaking", "pronunciation", "what is", "what does", "how do",
+    "can you", "please", "help me", "i want to", "i would like",
+]
+
+
 def is_in_domain(query: str, llm=None) -> bool:
     """
     Determina si la query pertenece al dominio ESL.
     Primero heurística; si es UNKNOWN, consulta LLM como juez.
     """
     if not ENABLE_DOMAIN_GUARDRAIL:
+        return True
+
+    # Siempre IN_DOMAIN si contiene palabras clave conversacionales
+    query_lower = query.lower()
+    if any(kw in query_lower for kw in ALWAYS_IN_DOMAIN):
         return True
 
     verdict = heuristic_domain_check(query)

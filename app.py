@@ -19,6 +19,24 @@ from src.config import LLM_MODEL_NAME, USER_DATA_DIR
 
 st.set_page_config(page_title="LIA-Colombo AI Tutor", layout="wide", page_icon="🇨🇴")
 
+
+@st.cache_resource
+def _warmup_ollama():
+    """Carga el modelo en VRAM al iniciar la app, antes del primer usuario."""
+    import requests as _req
+    from src.config import OLLAMA_BASE_URL, LLM_MODEL_NAME
+    try:
+        _req.post(
+            f"{OLLAMA_BASE_URL}/api/generate",
+            json={"model": LLM_MODEL_NAME, "prompt": " ", "keep_alive": "30m"},
+            timeout=10,
+        )
+    except Exception:
+        pass
+    return True
+
+_warmup_ollama()
+
 st.markdown("""
 <style>
 /* Sidebar institucional */
@@ -27,39 +45,57 @@ st.markdown("""
 }
 [data-testid="stSidebar"] * { color: white !important; }
 [data-testid="stSidebar"] .stButton > button {
-    background-color: #FFD94F;
+    background-color: #E8C23A;
     color: #1A2744;
     border: none;
-    border-radius: 8px;
+    border-radius: 12px;
     font-weight: 700;
+    font-size: 15px;
+    padding: 10px 16px;
     width: 100%;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
+    box-shadow: 0 3px 8px rgba(232,194,58,0.35);
 }
 [data-testid="stSidebar"] .stButton > button:hover {
     background-color: #EB8E35;
     color: white;
+    box-shadow: 0 5px 14px rgba(235,142,53,0.4);
 }
 
-/* Header con línea amarilla */
-h1 { border-bottom: 4px solid #FFD94F; padding-bottom: 8px; }
+/* Fuente más grande en chat */
+[data-testid="stChatMessage"] {
+    font-size: 17px !important;
+    line-height: 1.65 !important;
+}
 
-/* Botones principales */
+/* Header */
+h1 { border-bottom: 4px solid #E8C23A; padding-bottom: 8px; }
+
+/* Botones principales más llamativos */
 .stButton > button {
-    background-color: #FFD94F;
+    background: linear-gradient(135deg, #E8C23A 0%, #EB8E35 100%);
     color: #1A2744;
     border: none;
-    border-radius: 8px;
-    font-weight: 700;
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 16px;
+    padding: 10px 18px;
+    box-shadow: 0 4px 12px rgba(232,194,58,0.4);
+    transition: all 0.2s ease;
+    letter-spacing: 0.3px;
 }
 .stButton > button:hover {
-    background-color: #EB8E35;
+    background: linear-gradient(135deg, #EB8E35 0%, #E8C23A 100%);
     color: white;
+    box-shadow: 0 8px 20px rgba(235,142,53,0.5);
+    transform: translateY(-2px);
 }
 
 /* Chat input */
 [data-testid="stChatInput"] textarea {
-    border: 2px solid #FFD94F !important;
+    border: 2px solid #E8C23A !important;
     border-radius: 12px !important;
+    font-size: 16px !important;
 }
 
 /* Burbujas del asistente */
@@ -74,9 +110,6 @@ h1 { border-bottom: 4px solid #FFD94F; padding-bottom: 8px; }
     border: 1px solid #04A6E1 !important;
     border-radius: 8px;
 }
-
-/* Info/warning/success */
-[data-testid="stAlert"] { border-radius: 8px; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -130,6 +163,74 @@ def strip_sources_block(answer: str) -> str:
     import re
     cleaned = re.sub(r'\n*📚\s*Fuentes:.*', '', answer, flags=re.DOTALL | re.IGNORECASE)
     return cleaned.strip()
+
+
+def strip_nota_block(text: str) -> str:
+    """Elimina el bloque 'Nota: este tema no está cubierto...' del LLM."""
+    import re
+    cleaned = re.sub(r'\n*Nota:.*?próxima clase\.?', '', text, flags=re.DOTALL | re.IGNORECASE)
+    return cleaned.strip()
+
+
+def filtered_stream(raw_stream):
+    """Filtra bloque 'Nota:' del stream sin producir artefactos."""
+    GUARD = 10  # buffer de seguridad para detectar patrones partidos
+    output = ""
+    yielded = 0
+    for chunk in raw_stream:
+        output += chunk
+        nota_idx = output.find("\nNota")
+        if nota_idx != -1:
+            safe = output[:nota_idx].rstrip()
+            if len(safe) > yielded:
+                yield safe[yielded:]
+            return
+        # Yield solo hasta GUARD chars antes del final (por si "\nNota" está partido)
+        safe_end = max(yielded, len(output) - GUARD)
+        if safe_end > yielded:
+            yield output[yielded:safe_end]
+            yielded = safe_end
+    # Stream terminó sin Nota — yield lo que queda
+    if len(output) > yielded:
+        yield output[yielded:]
+
+
+def correction_then_stream(correction_text: str, stream_gen):
+    """Yield corrección primero, luego el stream del LLM."""
+    if correction_text:
+        yield correction_text
+    yield from stream_gen
+
+
+def get_grammar_correction(user_text: str) -> str:
+    """Detecta errores y devuelve corrección formateada, o cadena vacía si está correcto."""
+    from openai import OpenAI
+    import os
+    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    resp = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{
+            "role": "user",
+            "content": (
+                "You are a strict grammar checker. "
+                "Check ONLY for spelling mistakes and clear grammatical errors "
+                "(wrong verb conjugation, missing subject, wrong tense). "
+                "Do NOT change vocabulary, word choice, or style. "
+                "Do NOT 'improve' sentences that are already correct. "
+                "If the sentence is grammatically correct, return exactly: OK\n"
+                "If there are errors, return ONLY the corrected sentence, nothing else.\n\n"
+                f"Text: {user_text}"
+            )
+        }],
+        max_tokens=100,
+        temperature=0,
+    )
+    corrected = resp.choices[0].message.content.strip()
+    import re
+    def _normalize(t): return re.sub(r'[^\w\s]', '', t).lower().strip()
+    if corrected == "OK" or _normalize(corrected) == _normalize(user_text):
+        return ""
+    return f'✏️ *Correction:* "{corrected}" ✓\n\n'
 
 
 def detect_translation_request(text: str) -> bool:
@@ -228,7 +329,7 @@ if len(partes_nombre) >= 3:
 else:
     primer_nombre_pila = partes_nombre[0].title()
 
-st.title(f"🤖 LIA — Hola, {primer_nombre_pila}")
+st.title(f"🤖 LIA — Hello, {primer_nombre_pila}!")
 
 # ==========================================
 # SIDEBAR
@@ -334,24 +435,24 @@ if not st.session_state.messages:
     with st.chat_message("assistant"):
         st.markdown(f"Hi, **{primer_nombre_pila}**! 👋 I'm **LIA**, your English tutor from Colombo.\n\nWhat do you want to do today?")
 
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("📖 Question about my book", key="opt1", use_container_width=True):
-                st.session_state.pending_prompt = "I have a question about my book"
-                st.rerun()
-            if st.button("📝 Explain a grammar topic", key="opt3", use_container_width=True):
-                st.session_state.pending_prompt = "Can you explain a grammar topic?"
-                st.rerun()
-        with col2:
-            if st.button("💬 Practice conversation", key="opt2", use_container_width=True):
-                st.session_state.pending_prompt = "I want to practice conversation in English"
-                st.rerun()
-            if st.button("✏️ Check my writing", key="opt4", use_container_width=True):
-                st.session_state.pending_prompt = "Can you check my writing?"
-                st.rerun()
-
-        if st.button("🔍 Something else — I'll type my question", key="opt5", use_container_width=True):
-            pass  # El usuario simplemente escribe en el chat input
+        if st.button("📖  My Book", key="opt1", use_container_width=True):
+            st.session_state.pending_prompt = "I have a question about my book"
+            st.session_state.last_prompt_was_audio = False
+            st.rerun()
+        if st.button("💬  Conversation", key="opt2", use_container_width=True):
+            st.session_state.pending_prompt = "I want to practice conversation in English"
+            st.session_state.last_prompt_was_audio = False
+            st.rerun()
+        if st.button("📝  Grammar", key="opt3", use_container_width=True):
+            st.session_state.pending_prompt = "Can you explain a grammar topic?"
+            st.session_state.last_prompt_was_audio = False
+            st.rerun()
+        if st.button("✏️  My Writing", key="opt4", use_container_width=True):
+            st.session_state.pending_prompt = "Can you check my writing?"
+            st.session_state.last_prompt_was_audio = False
+            st.rerun()
+        if st.button("🔍  Something Else", key="opt5", use_container_width=True):
+            pass
 
 # Reproducir audio TTS si hay uno pendiente del turno anterior
 if st.session_state.tts_audio_bytes is not None:
@@ -401,23 +502,40 @@ if prompt:
 
     try:
         with st.chat_message("assistant"):
+            _query = prompt
+            if detect_translation_request(prompt):
+                _query = (
+                    "⚠️ INSTRUCCIÓN OBLIGATORIA: El estudiante no entendió tu respuesta anterior. "
+                    "Debes responder TODO en español simple y claro. "
+                    "Explica lo que dijiste antes en español. "
+                    "Al final agrega exactamente: 'Now you try! 💪'\n\n"
+                    f"Mensaje del estudiante: {prompt}"
+                )
+
             with st.spinner("Consultando tus materiales de clase..."):
-                _query = prompt
-                if detect_translation_request(prompt):
-                    _query = (
-                        "⚠️ INSTRUCCIÓN OBLIGATORIA: El estudiante no entendió tu respuesta anterior. "
-                        "Debes responder TODO en español simple y claro. "
-                        "Explica lo que dijiste antes en español. "
-                        "Al final agrega exactamente: 'Now you try! 💪'\n\n"
-                        f"Mensaje del estudiante: {prompt}"
-                    )
-                rag_response = pipeline.query(
+                stream_gen, citations, guardrail = pipeline.query_stream(
                     user_query=_query,
                     user_info=user_info,
                     conversation_history=st.session_state.messages[:-1],
                 )
 
-            st.markdown(strip_sources_block(rag_response.answer))
+            correction_prefix = ""
+            try:
+                correction_prefix = get_grammar_correction(prompt)
+            except Exception:
+                pass
+            full_answer = st.write_stream(
+                correction_then_stream(correction_prefix, filtered_stream(stream_gen))
+            )
+            full_answer = strip_nota_block(full_answer)
+
+            from src.llm_chain import RAGResponse
+            rag_response = RAGResponse(
+                answer=full_answer,
+                citations=citations,
+                guardrail_triggered=guardrail,
+                llm_model=st.session_state.selected_llm,
+            )
             tts_audio_for_msg = None
             if st.session_state.last_prompt_was_audio:
                 st.session_state.last_prompt_was_audio = False
