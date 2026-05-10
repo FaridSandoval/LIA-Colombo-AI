@@ -29,8 +29,7 @@ for d in (RAW_DATA_DIR, USER_DATA_DIR, FEEDBACK_DIR, SESSIONS_DIR,
 # ==========================================
 # 2. EMBEDDINGS (BGE-M3 multilingüe)
 # ==========================================
-EMBEDDING_MODEL_NAME = os.getenv("EMBEDDING_MODEL_NAME", "BAAI/bge-m3")
-EMBEDDING_DEVICE = os.getenv("EMBEDDING_DEVICE", "auto")  # "auto" | "cuda" | "cpu"
+EMBEDDING_MODEL_NAME = os.getenv("EMBEDDING_MODEL_NAME", "text-embedding-3-small")
 CHROMA_COLLECTION_NAME = os.getenv("CHROMA_COLLECTION_NAME", "lia_bge_m3")
 
 # ==========================================

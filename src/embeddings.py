@@ -1,35 +1,23 @@
-"""Vector store + embeddings multilingües BGE-M3."""
+"""Vector store + embeddings via OpenAI text-embedding-3-small."""
 from __future__ import annotations
 import logging
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from langchain_chroma import Chroma
 from src.config import (
     EMBEDDING_MODEL_NAME,
-    EMBEDDING_DEVICE,
     CHROMA_COLLECTION_NAME,
     CHROMA_DB_DIR,
+    OPENAI_API_KEY,
 )
 
 logger = logging.getLogger(__name__)
 
 
-def _resolve_device() -> str:
-    if EMBEDDING_DEVICE != "auto":
-        return EMBEDDING_DEVICE
-    try:
-        import torch
-        return "cuda" if torch.cuda.is_available() else "cpu"
-    except ImportError:
-        return "cpu"
-
-
-def get_embedding_model() -> HuggingFaceEmbeddings:
-    """Instancia BGE-M3 vía sentence-transformers (HuggingFace)."""
-    device = _resolve_device()
-    return HuggingFaceEmbeddings(
-        model_name=EMBEDDING_MODEL_NAME,
-        model_kwargs={"device": device},
-        encode_kwargs={"normalize_embeddings": True, "batch_size": 32},
+def get_embedding_model() -> OpenAIEmbeddings:
+    """Instancia OpenAI text-embedding-3-small."""
+    return OpenAIEmbeddings(
+        model=EMBEDDING_MODEL_NAME,
+        api_key=OPENAI_API_KEY,
     )
 
 
