@@ -40,6 +40,7 @@ src/bin/
 *.xlsx
 !data/raw/syllabus.xlsx
 !data/raw/vocabulary/SYM_2_WordList.xlsx
+!data/user/estudiantes_dummies.xlsx
 
 # --- CSV: ignora datos de usuario, permite resultados de benchmark ---
 *.csv
