@@ -94,13 +94,17 @@ def heuristic_domain_check(query: str) -> str:
 ALWAYS_IN_DOMAIN = [
     "chat", "talk", "conversation", "practice", "hobby", "hobbies",
     "free time", "weekend", "family", "tell me", "let's", "lets",
-    "speaking", "pronunciation", "what is", "what does", "how do",
-    "can you", "please", "help me", "i want to", "i would like",
-    "how do you say", "how to say", "what's", "how much", "how many",
-    "numbers", "colors", "days", "months",
-    "cuanto", "cuánto", "cuantos", "cuántos", "cuál", "cual",
-    "matemáticas", "matematicas", "math", "number", "número", "numero",
-    "sum", "resta", "multiply", "divide", "plus", "minus", "times",
+    "speaking", "pronunciation", "what is", "what's", "what does", "what do",
+    "how do", "how does", "how much", "how many", "how do you say", "how to say",
+    "can you", "please", "help me",
+    "i want", "i would", "i like", "i love", "i need",
+    "numbers", "number", "colors", "color", "days", "day",
+    "months", "month", "years", "year",
+    "cuanto", "cuánto", "cuantos", "cuántos", "cuanta", "cuánta",
+    "cuál", "cual", "cuáles",
+    "matemáticas", "matematicas", "math",
+    "número", "numero", "suma", "resta",
+    "multiply", "divide", "plus", "minus", "times",
     "equals", "igual", "es igual", "más", "menos",
 ]
 
@@ -123,7 +127,7 @@ def is_in_domain(query: str, llm=None) -> bool:
         return True
     if verdict == "OFF_DOMAIN":
         # Preguntas de cultura general muy cortas → IN_DOMAIN (LIA las convierte en lección)
-        if len(query.strip()) <= 20:
+        if len(query.strip()) <= 25:
             return True
         return False
 

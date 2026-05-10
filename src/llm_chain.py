@@ -77,7 +77,7 @@ def _get_langfuse():
 # ==========================================
 # Helpers
 # ==========================================
-def summarize_conversation_history(messages: List[dict], max_messages: int = 6) -> str:
+def summarize_conversation_history(messages: List[dict], max_messages: int = 20) -> str:
     if not messages:
         return "(Sin historial previo)"
     recent = messages[-max_messages:]
@@ -85,7 +85,7 @@ def summarize_conversation_history(messages: List[dict], max_messages: int = 6) 
     for m in recent:
         role = (m.get("role") if isinstance(m, dict) else getattr(m, "type", "user")).upper()
         content = (m.get("content") if isinstance(m, dict) else getattr(m, "content", ""))
-        lines.append(f"[{role}] {content[:250]}")
+        lines.append(f"[{role}] {content[:300]}")
     return "\n".join(lines)
 
 
@@ -170,10 +170,9 @@ class LIARAGPipeline:
         if not is_in_domain(user_query):
             return RAGResponse(
                 answer=(
-                    "Esa pregunta parece estar fuera del ámbito de tu curso de inglés. "
-                    "Estoy aquí para ayudarte con gramática, vocabulario, pronunciación "
-                    "y práctica conversacional del ciclo Fundamental Plus. "
-                    "¿Hay algún tema de la clase con el que pueda ayudarte?"
+                    "That question is outside my English class scope. "
+                    "I'm here to help with grammar, vocabulary, pronunciation "
+                    "and conversation practice! What English topic can I help you with? 😊"
                 ),
                 guardrail_triggered="off_domain",
                 llm_model=self.llm_model,
@@ -236,6 +235,51 @@ class LIARAGPipeline:
             llm_model=self.llm_model,
             trace_id=trace_id,
         )
+
+    def query_stream(
+        self,
+        user_query: str,
+        user_info: Optional[dict] = None,
+        conversation_history: Optional[List[dict]] = None,
+    ):
+        """
+        Igual que query() pero devuelve (generator, citations, guardrail).
+        El generator yield-ea texto token a token para streaming en Streamlit.
+        """
+        user_info = user_info or {}
+        conversation_history = conversation_history or []
+
+        if not is_in_domain(user_query):
+            off_msg = (
+                "That question is outside my English class scope. "
+                "I'm here to help with grammar, vocabulary, pronunciation "
+                "and conversation practice! What English topic can I help you with? 😊"
+            )
+            def _static(t): yield t
+            return _static(off_msg), [], "off_domain"
+
+        filters = self._infer_student_filters(user_info)
+        ranked = self.retriever.search(user_query, **filters)
+        scores = [s for _, s in ranked]
+        citations = extract_citations(ranked)
+
+        if not ranked or detect_low_confidence(scores):
+            degraded_msgs = [
+                {"role": "user", "content": DEGRADED_RESPONSE_SYSTEM_PROMPT.format(query=user_query)}
+            ]
+            def _stream_degraded():
+                for chunk in self.llm.stream(degraded_msgs):
+                    yield chunk.content if hasattr(chunk, "content") else str(chunk)
+            return _stream_degraded(), [], "low_confidence_degraded"
+
+        context_block = format_context_for_prompt(ranked)
+        messages = self._build_prompt(user_query, user_info, conversation_history, context_block)
+
+        def _stream_normal():
+            for chunk in self.llm.stream(messages):
+                yield chunk.content if hasattr(chunk, "content") else str(chunk)
+
+        return _stream_normal(), citations, None
 
 
 # ==========================================
