@@ -96,6 +96,8 @@ ALWAYS_IN_DOMAIN = [
     "free time", "weekend", "family", "tell me", "let's", "lets",
     "speaking", "pronunciation", "what is", "what does", "how do",
     "can you", "please", "help me", "i want to", "i would like",
+    "how do you say", "how to say", "what's", "how much", "how many",
+    "numbers", "colors", "days", "months",
 ]
 
 
@@ -116,6 +118,9 @@ def is_in_domain(query: str, llm=None) -> bool:
     if verdict == "IN_DOMAIN":
         return True
     if verdict == "OFF_DOMAIN":
+        # Preguntas de cultura general muy cortas → IN_DOMAIN (LIA las convierte en lección)
+        if len(query.strip()) <= 20:
+            return True
         return False
 
     # Ambiguo → LLM juez
