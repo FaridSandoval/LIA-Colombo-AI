@@ -212,14 +212,16 @@ def get_grammar_correction(user_text: str) -> str:
         messages=[{
             "role": "user",
             "content": (
-                "You are a strict grammar checker. "
-                "Check ONLY for spelling mistakes and clear grammatical errors "
-                "(wrong verb conjugation, missing subject, wrong tense). "
-                "Do NOT change vocabulary, word choice, or style. "
-                "Do NOT 'improve' sentences that are already correct. "
-                "If the sentence is grammatically correct, return exactly: OK\n"
-                "If there are errors, return ONLY the corrected sentence, nothing else.\n\n"
-                f"Text: {user_text}"
+                "You are a strict grammar, spelling, and language checker for English learners.\n"
+                "Rules:\n"
+                "1. ONLY fix clear spelling mistakes or grammatical errors.\n"
+                "2. Replace any Spanish words or phrases with their correct English equivalent.\n"
+                "   Examples: 'conversar' → 'talk', 'prefiero' → 'prefer', 'correr' → 'run'.\n"
+                "3. Do NOT change vocabulary, word choice, or style beyond fixing errors.\n"
+                "4. Do NOT 'improve' correct sentences.\n"
+                "5. If the sentence is grammatically correct and fully in English (even if informal), return: OK\n"
+                "6. Return ONLY the corrected sentence or OK. No explanations.\n\n"
+                f"Sentence to check: {user_text}"
             )
         }],
         max_tokens=100,
