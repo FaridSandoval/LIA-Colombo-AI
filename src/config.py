@@ -104,6 +104,8 @@ LOW_CONFIDENCE_THRESHOLD = float(os.getenv("LOW_CONFIDENCE_THRESHOLD", 0.05))
 # ==========================================
 ENABLE_DOMAIN_GUARDRAIL = os.getenv("ENABLE_DOMAIN_GUARDRAIL", "true").lower() == "true"
 ENABLE_LOW_CONFIDENCE_GUARDRAIL = os.getenv("ENABLE_LOW_CONFIDENCE_GUARDRAIL", "true").lower() == "true"
+# Reranker: descarga ~1.1 GB en primer uso — desactivado por default en Cloud free tier
+ENABLE_RERANKER = os.getenv("ENABLE_RERANKER", "false").lower() == "true"
 
 # ==========================================
 # 7. OBSERVABILIDAD (LangFuse self-hosted)

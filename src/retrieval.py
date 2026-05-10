@@ -21,8 +21,9 @@ from src.config import (
     RERANK_TOP_K,
     RERANKER_MODEL_NAME,
     RERANKER_USE_FP16,
+    ENABLE_RERANKER,
     ENABLE_QUERY_REWRITING,
-    OLLAMA_BASE_URL,
+    OPENAI_API_KEY,
     LLM_UTILITY_MODEL,
 )
 from src.prompts import QUERY_REWRITE_PROMPT
@@ -39,6 +40,8 @@ _reranker = None
 
 def get_reranker():
     """Inicializa el cross-encoder BGE-reranker-v2-m3 (una sola vez)."""
+    if not ENABLE_RERANKER:
+        return None
     global _reranker
     if _reranker is not None:
         return _reranker
@@ -63,10 +66,10 @@ def _get_rewrite_llm():
     if _rewrite_llm is not None:
         return _rewrite_llm
     try:
-        from langchain_ollama import ChatOllama
-        _rewrite_llm = ChatOllama(
+        from langchain_openai import ChatOpenAI
+        _rewrite_llm = ChatOpenAI(
             model=LLM_UTILITY_MODEL,
-            base_url=OLLAMA_BASE_URL,
+            api_key=OPENAI_API_KEY,
             temperature=0.0,
         )
     except Exception as e:
@@ -231,9 +234,11 @@ def rerank_documents(
     candidates: List[Tuple[Document, float]],
     top_k: int = RERANK_TOP_K,
 ) -> List[Tuple[Document, float]]:
-    """Re-rankea con cross-encoder. Si no disponible, devuelve los primeros top_k."""
+    """Re-rankea con cross-encoder. Si ENABLE_RERANKER=false, bypass directo."""
     if not candidates:
         return []
+    if not ENABLE_RERANKER:
+        return candidates[:top_k]
     reranker = get_reranker()
     if reranker is None:
         return candidates[:top_k]
