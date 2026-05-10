@@ -515,10 +515,15 @@ if prompt:
                 )
 
             with st.spinner("Consultando tus materiales de clase..."):
+                _db_history = load_history(student_id, limit=20)
+                history_messages = [
+                    {"role": m["role"], "content": m["content"]}
+                    for m in _db_history
+                ]
                 stream_gen, citations, guardrail = pipeline.query_stream(
                     user_query=_query,
                     user_info=user_info,
-                    conversation_history=st.session_state.messages[:-1],
+                    conversation_history=history_messages,
                 )
 
             correction_prefix = ""

@@ -98,6 +98,10 @@ ALWAYS_IN_DOMAIN = [
     "can you", "please", "help me", "i want to", "i would like",
     "how do you say", "how to say", "what's", "how much", "how many",
     "numbers", "colors", "days", "months",
+    "cuanto", "cuánto", "cuantos", "cuántos", "cuál", "cual",
+    "matemáticas", "matematicas", "math", "number", "número", "numero",
+    "sum", "resta", "multiply", "divide", "plus", "minus", "times",
+    "equals", "igual", "es igual", "más", "menos",
 ]
 
 
