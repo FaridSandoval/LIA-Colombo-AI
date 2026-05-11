@@ -196,15 +196,21 @@ def get_grammar_correction(user_text: str) -> str:
         messages=[{
             "role": "user",
             "content": (
-                "You are a strict grammar, spelling, and language checker for English learners.\n"
+                "You are a strict grammar and spelling checker for English learners. "
+                "Your job is to detect ACTUAL errors, not to rewrite or paraphrase.\n\n"
                 "Rules:\n"
                 "1. ONLY fix clear spelling mistakes or grammatical errors.\n"
-                "2. Replace any Spanish words or phrases with their correct English equivalent.\n"
-                "   Examples: 'conversar' → 'talk', 'prefiero' → 'prefer', 'correr' → 'run'.\n"
+                "2. Replace Spanish words with English (e.g., 'conversar' → 'talk', 'prefiero' → 'prefer').\n"
                 "3. Do NOT change vocabulary, word choice, or style beyond fixing errors.\n"
-                "4. Do NOT 'improve' correct sentences.\n"
-                "5. If the sentence is grammatically correct and fully in English (even if informal), return: OK\n"
-                "6. Return ONLY the corrected sentence or OK. No explanations.\n\n"
+                "4. Do NOT 'improve' or paraphrase correct sentences.\n"
+                "5. If the sentence is grammatically correct and fully in English (even if simple or informal), return EXACTLY: OK\n"
+                "6. Return ONLY the corrected sentence OR the word OK. No explanations.\n\n"
+                "Examples:\n"
+                "Input: 'I want to practice conversation in English' → Output: OK\n"
+                "Input: 'I love conversar with you' → Output: I love to talk with you\n"
+                "Input: 'i laik to drawiungs in my free taim' → Output: I like to draw in my free time.\n"
+                "Input: 'She go to school every day' → Output: She goes to school every day.\n"
+                "Input: 'In my free time I read books' → Output: OK\n\n"
                 f"Sentence to check: {user_text}"
             )
         }],
