@@ -1,6 +1,3 @@
-[theme]
-primaryColor = "#FFD94F"
-backgroundColor = "#FFFFFF"
-secondaryBackgroundColor = "#F0F7FF"
-textColor = "#1A2744"
-font = "sans serif"
+﻿[server]
+fileWatcherType = "none"
+headless = true

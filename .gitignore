@@ -92,3 +92,5 @@ docs/hallazgos_*.md
 # Diagnóstico
 eval/te_inspect/
 eval/results/smoke_*.txt
+
+uv.lock
