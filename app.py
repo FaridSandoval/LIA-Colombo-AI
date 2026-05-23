@@ -179,50 +179,6 @@ def filtered_stream(raw_stream):
         yield output[yielded:]
 
 
-def correction_then_stream(correction_text: str, stream_gen):
-    """Yield corrección primero, luego el stream del LLM."""
-    if correction_text:
-        yield correction_text
-    yield from stream_gen
-
-
-def get_grammar_correction(user_text: str) -> str:
-    """Detecta errores y devuelve corrección formateada, o cadena vacía si está correcto."""
-    from openai import OpenAI
-    import os
-    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-    resp = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{
-            "role": "user",
-            "content": (
-                "You are a strict grammar and spelling checker for English learners. "
-                "Your job is to detect ACTUAL errors, not to rewrite or paraphrase.\n\n"
-                "Rules:\n"
-                "1. ONLY fix clear spelling mistakes or grammatical errors.\n"
-                "2. Replace Spanish words with English (e.g., 'conversar' → 'talk', 'prefiero' → 'prefer').\n"
-                "3. Do NOT change vocabulary, word choice, or style beyond fixing errors.\n"
-                "4. Do NOT 'improve' or paraphrase correct sentences.\n"
-                "5. If the sentence is grammatically correct and fully in English (even if simple or informal), return EXACTLY: OK\n"
-                "6. Return ONLY the corrected sentence OR the word OK. No explanations.\n\n"
-                "Examples:\n"
-                "Input: 'I want to practice conversation in English' → Output: OK\n"
-                "Input: 'I love conversar with you' → Output: I love to talk with you\n"
-                "Input: 'i laik to drawiungs in my free taim' → Output: I like to draw in my free time.\n"
-                "Input: 'She go to school every day' → Output: She goes to school every day.\n"
-                "Input: 'In my free time I read books' → Output: OK\n\n"
-                f"Sentence to check: {user_text}"
-            )
-        }],
-        max_tokens=100,
-        temperature=0,
-    )
-    corrected = resp.choices[0].message.content.strip()
-    import re
-    def _normalize(t): return re.sub(r'[^\w\s]', '', t).lower().strip()
-    if corrected == "OK" or _normalize(corrected) == _normalize(user_text):
-        return ""
-    return f'✏️ *Correction:* "{corrected}" ✓\n\n'
 
 
 def detect_translation_request(text: str) -> bool:
@@ -516,14 +472,7 @@ if prompt:
                     conversation_history=history_messages,
                 )
 
-            correction_prefix = ""
-            try:
-                correction_prefix = get_grammar_correction(prompt)
-            except Exception:
-                pass
-            full_answer = st.write_stream(
-                correction_then_stream(correction_prefix, filtered_stream(stream_gen))
-            )
+            full_answer = st.write_stream(filtered_stream(stream_gen))
             full_answer = strip_nota_block(full_answer)
 
             from src.llm_chain import RAGResponse

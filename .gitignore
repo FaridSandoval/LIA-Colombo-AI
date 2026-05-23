@@ -95,3 +95,8 @@ eval/results/smoke_*.txt
 
 uv.lock
 *.bak_*
+
+data/raw/grammar_reference/
+
+data/raw/grammar_reference/
+data/raw/quarantine/student_book/
