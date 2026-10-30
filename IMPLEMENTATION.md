@@ -1,4 +1,4 @@
-# LIA-Colombo AI — Guía de Implementación v0.2
+# LIA-UAO AI — Guía de Implementación v0.2
 
 Este documento describe el nuevo pipeline RAG avanzado y cómo ponerlo a correr.
 

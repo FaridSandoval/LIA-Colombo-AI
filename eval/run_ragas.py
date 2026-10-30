@@ -365,7 +365,7 @@ def run_for_model(
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Benchmark RAGAS para LIA-Colombo AI")
+    parser = argparse.ArgumentParser(description="Benchmark RAGAS para LIA-UAO AI")
     parser.add_argument("--llm", default=LLM_MODEL_NAME, help="Modelo Ollama a evaluar")
     parser.add_argument("--all", action="store_true",
                         help="Correr todos los candidatos de LLM_BENCHMARK_CANDIDATES")
@@ -413,5 +413,4 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-
 

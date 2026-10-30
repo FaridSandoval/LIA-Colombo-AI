@@ -1,5 +1,5 @@
 """
-Guardrails de LIA-Colombo AI.
+Guardrails de LIA-UAO AI.
 
 - is_in_domain: clasificación de dominio (ESL vs fuera de tema).
 - detect_low_confidence: umbral sobre scores de retrieval.
@@ -34,7 +34,7 @@ _ESL_KEYWORDS = {
     # Conversación / curso
     "conversación", "conversation", "dialogue", "dialogo", "hablar", "speak",
     "escribir", "write", "leer", "read", "escuchar", "listen",
-    "colombo", "fundamental", "unidad", "unit", "lección", "leccion", "lesson",
+    "uao", "fundamental", "unidad", "unit", "lección", "leccion", "lesson",
     "ejercicio", "exercise", "práctica", "practice",
 }
 

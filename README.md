@@ -22,12 +22,11 @@
 
 ## Objetivo
 
-LIA (*Learning Intelligence Assistant*) es una tutora virtual conversacional para estudiantes del **Centro Cultural Colombo Americano de Cali** (ciclo Fundamental Plus, nivel A2–B1). Extiende la ventana de práctica lingüística fuera del aula mediante un sistema RAG anclado en los materiales pedagógicos oficiales de la institución, respetando estrictamente la metodología Communicative Language Teaching (CLT).
+LIA (*Learning Intelligence Assistant*) es una tutora virtual conversacional para estudiantes de **UAO** (ciclo Fundamental Plus, nivel A2–B1). Extiende la ventana de práctica lingüística fuera del aula mediante un sistema RAG anclado en los materiales pedagógicos del curso, respetando estrictamente la metodología Communicative Language Teaching (CLT).
 
 ### Institución aliada
 
-**Centro Cultural Colombo Americano** — Centro Binacional, Cali, Colombia
-[www.colomboamericano.edu.co](https://www.colomboamericano.edu.co)
+**UAO** — Cali, Colombia
 
 ---
 

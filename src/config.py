@@ -1,4 +1,4 @@
-"""Configuración centralizada del pipeline RAG LIA-Colombo AI."""
+"""Configuración centralizada del pipeline RAG LIA-UAO AI."""
 import os
 from pathlib import Path
 from dotenv import load_dotenv
@@ -120,7 +120,7 @@ ENABLE_LANGFUSE = bool(LANGFUSE_PUBLIC_KEY and LANGFUSE_SECRET_KEY)
 # ==========================================
 DEFAULT_SYSTEM_PROMPT = os.getenv(
     "SYSTEM_PROMPT",
-    "Eres un asistente pedagógico experto del Centro Cultural Colombo Americano. "
+    "Eres un asistente pedagógico experto de UAO. "
     "Utiliza únicamente el contexto proporcionado para responder de forma clara, "
     "didáctica y enfocada en el aprendizaje del inglés. "
     "Si la respuesta no está en el contexto, indícalo sin inventar."

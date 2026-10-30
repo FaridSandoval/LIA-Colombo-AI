@@ -1,5 +1,5 @@
 """
-LIA-Colombo AI — Streamlit app con RAG avanzado.
+LIA-UAO AI — Streamlit app con RAG avanzado.
 Incluye: citaciones, feedback 👍/👎, session memory persistente, filtros por perfil.
 """
 import hashlib
@@ -17,7 +17,7 @@ from src.session_memory import (
 )
 from src.config import LLM_MODEL_NAME, USER_DATA_DIR
 
-st.set_page_config(page_title="LIA-Colombo AI Tutor", layout="wide", page_icon="🇨🇴")
+st.set_page_config(page_title="LIA-UAO AI Tutor", layout="wide", page_icon="🇨🇴")
 
 
 
@@ -245,7 +245,7 @@ for key, default in [
 if not st.session_state.logged_in or st.session_state.user_info is None:
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        st.title("🎓 LIA-Colombo AI Login")
+        st.title("🎓 LIA-UAO AI Login")
         st.subheader("Plataforma de Tutoría Inteligente")
         with st.form("login_form"):
             id_input = st.text_input("Ingrese su ID Number")
@@ -283,7 +283,7 @@ st.title(f"🤖 LIA — Hello, {primer_nombre_pila}!")
 # SIDEBAR
 # ==========================================
 with st.sidebar:
-    st.image("assets/colombo_logo_transparent.png", use_container_width=True)
+    st.image("assets/vertical-blanco.png", use_container_width=True)
     st.divider()
     is_admin = user_info.get("Student Name", "").lower() == "admin"
 
@@ -315,8 +315,11 @@ with st.sidebar:
             st.info(f"Modelo actualizado a **{selected}**. Próxima pregunta usará este modelo.")
     else:
         st.header("👤 Perfil del Estudiante")
+        course = str(user_info["Course"]).strip()
+        if course == "Fundamental Plus 4":
+            course = "Nivel 1"
         st.info(
-            f"**Curso:** {user_info['Course']}\n\n"
+            f"**Curso:** {course}\n\n"
             f"**Estado:** {user_info['Status']}\n\n"
             f"**Nota:** {user_info['Final Score']}"
         )
@@ -381,7 +384,7 @@ for i, message in enumerate(st.session_state.messages):
 # Mensaje de bienvenida cuando el chat está vacío
 if not st.session_state.messages:
     with st.chat_message("assistant"):
-        st.markdown(f"Hi, **{primer_nombre_pila}**! 👋 I'm **LIA**, your English tutor from Colombo.\n\nWhat do you want to do today?")
+        st.markdown(f"Hi, **{primer_nombre_pila}**! 👋 I'm **LIA**, your English tutor from UAO.\n\nWhat do you want to do today?")
 
         if st.button("📖  My Book", key="opt1", use_container_width=True):
             st.session_state.pending_prompt = "I have a question about my book"

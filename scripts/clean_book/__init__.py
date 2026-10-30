@@ -1,6 +1,6 @@
 """
-clean_book — Pipeline de limpieza de libros pedagógicos del Centro Colombo Americano
-para alimentar el RAG de LIA-Colombo AI.
+clean_book — Pipeline de limpieza de libros pedagógicos de UAO
+para alimentar el RAG de LIA-UAO AI.
 
 Convierte un PDF nativo digital del Teacher's Edition en un conjunto de archivos
 Markdown estructurados (uno por unidad) listos para ser indexados por

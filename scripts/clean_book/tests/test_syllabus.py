@@ -25,7 +25,7 @@ SYLLABUS_PATH = Path("data/raw/Syllabus_Guide_-_Scope_and_Sequence.xlsx")
     reason=f"Syllabus no encontrado en {SYLLABUS_PATH}",
 )
 class TestSyllabusReal:
-    """Tests con el archivo real del Colombo."""
+    """Tests con el archivo real de UAO."""
 
     def setup_method(self):
         self.syllabus = load_syllabus(SYLLABUS_PATH)

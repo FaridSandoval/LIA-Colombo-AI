@@ -1,5 +1,5 @@
 """
-Pipeline conversacional LIA-Colombo AI — arquitectura agentic tool-calling.
+Pipeline conversacional LIA-UAO AI — arquitectura agentic tool-calling.
 
 El LLM decide cuándo y si invocar:
   - retrieve_context(): búsqueda híbrida en el corpus solo cuando lo necesita.

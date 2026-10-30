@@ -1,7 +1,7 @@
 [project]
 name = "rag-chatbot-mvp"
 version = "0.2.0"
-description = "LIA-Colombo AI — RAG avanzado con hybrid search, re-ranker, contextual retrieval y observabilidad"
+description = "LIA-UAO AI — RAG avanzado con hybrid search, re-ranker, contextual retrieval y observabilidad"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
