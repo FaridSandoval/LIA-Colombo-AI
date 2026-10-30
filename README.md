@@ -166,6 +166,12 @@ ENABLE_CONTEXTUAL_RETRIEVAL=true
 ENABLE_QUERY_REWRITING=true
 ```
 
+En Streamlit Cloud, configura `OPENAI_API_KEY` en **Manage app → Settings → Secrets** como secreto de nivel superior:
+
+```toml
+OPENAI_API_KEY = "sk-..."
+```
+
 Para ejecución **local con Ollama**:
 
 ```powershell

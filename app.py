@@ -3,7 +3,6 @@ LIA-UAO AI — Streamlit app con RAG avanzado.
 Incluye: citaciones, feedback 👍/👎, session memory persistente, filtros por perfil.
 """
 import hashlib
-import os
 import streamlit as st
 import pandas as pd
 from pathlib import Path
@@ -15,7 +14,7 @@ from src.llm_chain import get_pipeline
 from src.session_memory import (
     init_db, load_history, save_message, save_feedback, clear_history,
 )
-from src.config import LLM_MODEL_NAME, USER_DATA_DIR
+from src.config import LLM_MODEL_NAME, OPENAI_API_KEY, USER_DATA_DIR
 
 st.set_page_config(page_title="LIA-UAO AI Tutor", layout="wide", page_icon="🇨🇴")
 
@@ -195,7 +194,7 @@ def detect_translation_request(text: str) -> bool:
 
 def transcribe_audio(audio_bytes: bytes) -> str:
     """Transcribe audio usando OpenAI Whisper."""
-    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    client = OpenAI(api_key=OPENAI_API_KEY)
     transcript = client.audio.transcriptions.create(
         model="whisper-1",
         file=("audio.wav", audio_bytes, "audio/wav"),
@@ -206,7 +205,7 @@ def transcribe_audio(audio_bytes: bytes) -> str:
 
 def generate_speech(text: str) -> bytes:
     """Genera audio de la respuesta de LIA usando OpenAI TTS."""
-    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    client = OpenAI(api_key=OPENAI_API_KEY)
     import re
     clean = re.sub(r'\*+', '', text)
     clean = re.sub(r'📚.*', '', clean, flags=re.DOTALL).strip()

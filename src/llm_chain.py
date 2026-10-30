@@ -155,9 +155,8 @@ class LIAAgentPipeline:
         @tool
         def check_grammar(text: str) -> str:
             """Check the student's English text for grammar or spelling errors. Returns the corrected sentence, or 'OK' if the text is correct. Call this whenever the student writes something in English that may contain errors."""
-            import os as _os
             from openai import OpenAI as _OpenAI
-            client = _OpenAI(api_key=_os.getenv("OPENAI_API_KEY"))
+            client = _OpenAI(api_key=OPENAI_API_KEY)
             resp = client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": GRAMMAR_CHECK_PROMPT.format(text=text)}],
